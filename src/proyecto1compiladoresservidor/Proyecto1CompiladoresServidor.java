@@ -20,6 +20,7 @@ public class Proyecto1CompiladoresServidor {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+        System.out.println("hola");
         File archivo2 = new File("archivo2.txt");
         try {
           
