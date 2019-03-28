@@ -10,11 +10,26 @@ public class ComponenteParrafo {
     private String texto;
     private String alineacion;
     private String color;
+    
+    private boolean tieneAlineacion;
+    private boolean tieneColor;
 
     public ComponenteParrafo(String texto, String alineacion, String color) {
         this.texto = texto;
         this.alineacion = alineacion;
         this.color = color;
+        if(color==null){
+            tieneColor=false;
+        }else{
+            tieneColor=true;
+        }
+        
+        if(alineacion==null){
+            tieneAlineacion=false;
+            
+        }else{
+            tieneAlineacion=true;
+        }
     }
 
     public String getTexto() {
@@ -39,6 +54,22 @@ public class ComponenteParrafo {
 
     public void setColor(String color) {
         this.color = color;
+    }
+
+    public boolean isTieneAlineacion() {
+        return tieneAlineacion;
+    }
+
+    public void setTieneAlineacion(boolean tieneAlineacion) {
+        this.tieneAlineacion = tieneAlineacion;
+    }
+
+    public boolean isTieneColor() {
+        return tieneColor;
+    }
+
+    public void setTieneColor(boolean tieneColor) {
+        this.tieneColor = tieneColor;
     }
     
     

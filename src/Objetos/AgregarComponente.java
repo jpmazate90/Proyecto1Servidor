@@ -22,7 +22,7 @@ public class AgregarComponente {
     private boolean esVideo;
     private boolean esMenu;
 
-    public AgregarComponente(String id, String pagina, String clase, ComponenteTitulo compTitulo, ComponenteParrafo compParrafo, ComponenteImagen compImagen, ComponenteVideo compVideo, ComponenteMenu compMenu, boolean esTitulo, boolean esParrafo, boolean esImagen, boolean esVideo, boolean esMenu) {
+    public AgregarComponente(String id, String pagina, String clase, ComponenteTitulo compTitulo, ComponenteParrafo compParrafo, ComponenteImagen compImagen, ComponenteVideo compVideo, ComponenteMenu compMenu) {
         this.id = id;
         this.pagina = pagina;
         this.clase = clase;
@@ -31,11 +31,33 @@ public class AgregarComponente {
         this.compImagen = compImagen;
         this.compVideo = compVideo;
         this.compMenu = compMenu;
-        this.esTitulo = esTitulo;
-        this.esParrafo = esParrafo;
-        this.esImagen = esImagen;
-        this.esVideo = esVideo;
-        this.esMenu = esMenu;
+        if(compTitulo==null){
+            esTitulo=false;
+        }else{
+            esTitulo=true;
+        }
+        
+        if(compParrafo==null){
+            esParrafo=false;
+        }else{
+            esParrafo=true;
+        }
+        
+        if(compImagen==null){
+            esImagen=false;
+        }else{
+            esImagen=true;
+        }
+        if(compVideo==null){
+            esVideo=false;
+        }else{
+            esVideo=true;
+        }
+        if(compMenu==null){
+            esMenu=false;
+        }else{
+            esMenu=true;
+        }
     }
 
     public String getId() {

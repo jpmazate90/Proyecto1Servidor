@@ -1,5 +1,29 @@
-<accion nombre="BORRAR_SITIO_WEB">
 
-    <PARAMETRO NOMBRE="ID">[_PARRAFO]</PARAMETRO>
+<acciones>
+<accion nombre="AGREGAR_COMPONENTE">
+    <PARAMETROS>
+    	<PARAMETRO NOMBRE="ID">[_ID1]</PARAMETRO>
+    	<PARAMETRO NOMBRE="PAGINA">[$PAGINA]</PARAMETRO>
+    	<PARAMETRO NOMBRE="CLASE">[IMAGEN]</PARAMETRO>
+    </PARAMETROS>
+    <ATRIBUTOS>
+        <atributo nombre="ORIGEN">[http://c]</atriBUTO>
+    	<atributo nombre="ALINEACION">[JUSTIFICAR]</atriBUTO>
+	<atributo nombre="ALTURA">[55]</atriBUTO>
+	<atributo nombre="ANCHO">[99]</atriBUTO>
+    </ATRIBUTOS>
     
 </accion>
+
+<accion nombre="MODIFICAR_PAGINA">
+    <PARAMETROS>
+    	<PARAMETRO NOMBRE="ID">[_PARRAFO2]</PARAMETRO>
+    </PARAMETROS>
+    <ETIQUETAS>
+    	<etiqueta valor="_hola4"/>
+    	<etiqueta valor="_hola5"/>
+    	<etiqueta valor="_hola6"/>
+    </ETIQUETAS>
+    
+</accion>
+</acciones>

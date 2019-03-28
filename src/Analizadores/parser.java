@@ -5,11 +5,19 @@
 
 package Analizadores;
 
+import Objetos.AgregarComponente;
+import Objetos.ComponenteImagen;
+import Objetos.ComponenteMenu;
+import Objetos.ComponenteParrafo;
+import Objetos.ComponenteTitulo;
+import Objetos.ComponenteVideo;
+import Objetos.ModificarPagina;
+import Objetos.BorrarPagina;
 import Apoyo.Parametro;
 import Logica.Acciones;
-import Objetos.BorrarSitioWeb;
 import Objetos.NuevaPagina;
 import Objetos.NuevoSitioWeb;
+import Objetos.BorrarSitioWeb;
 import java.text.SimpleDateFormat;
 import java_cup.runtime.*;
 import java_cup.runtime.XMLElement;
@@ -788,9 +796,10 @@ public class parser extends java_cup.runtime.lr_parser {
 
 	ArrayList<String> etiquetas = new ArrayList<>();
 	ArrayList<Parametro> parametros = new ArrayList<>();
+	ArrayList<Parametro> atributos = new ArrayList<>();
 	
-	String usuarioCreacionGlobal;
-	String usuarioModificacionGlobal;
+	String usuarioCreacionGlobal = "default";
+	String usuarioModificacionGlobal = "default";
 	Date fechaActual = new Date();
 	SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd");
 	
@@ -805,6 +814,11 @@ public class parser extends java_cup.runtime.lr_parser {
 	
 	public void crearEtiqueta(String lexema){
 		etiquetas.add(lexema);
+	}
+	
+	public void crearAtributo(String nombre,String lexema){
+		Parametro parametro = new Parametro(nombre,lexema);
+		atributos.add(parametro);
 	}
 
 
@@ -1592,7 +1606,7 @@ if(tieneId==true){
 		String e53 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
 		
 
-                BorrarSitioWeb borrar = new BorrarSitioWeb(e53);
+BorrarSitioWeb borrar = new BorrarSitioWeb(e53);
 acciones.accionBorrarSitioWeb(borrar);
 
               CUP$parser$result = parser.getSymbolFactory().newSymbol("estructura_borrar_sitio_web",8, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
@@ -1704,7 +1718,7 @@ if(tieneId==true && tieneSitio==true && tienePadre==true){
 	
 	
 	if(error==false){
-	NuevaPagina pagina = new 		NuevaPagina(id,id,titulo,sitio,padre,usuarioCreacion,fechaCreacion,fechaModificacion,usuarioModificacion,etiquetas);
+	NuevaPagina pagina = new NuevaPagina(id,id,titulo,sitio,padre,usuarioCreacion,fechaCreacion,fechaModificacion,usuarioModificacion,etiquetas);
 	acciones.accionNuevaPagina(pagina);
 	}else{
 		System.out.println("HAY CAMPOS REPETIDOS");
@@ -1971,7 +1985,16 @@ if(tieneId==true && tieneSitio==true && tienePadre==true){
           case 90: // estructura_borrar_pagina ::= inicio_borrar_pagina parametro_borrar_pagina fin_accion 
             {
               String RESULT =null;
-		System.out.println("Se encontro un borrar pagina");
+		int e53left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
+		int e53right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
+		String e53 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
+		
+
+
+BorrarPagina pagina = new BorrarPagina(e53);
+acciones.accionBorrarPagina(pagina);
+
+
               CUP$parser$result = parser.getSymbolFactory().newSymbol("estructura_borrar_pagina",15, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -1980,7 +2003,10 @@ if(tieneId==true && tieneSitio==true && tienePadre==true){
           case 91: // parametro_borrar_pagina ::= inicio_parametro_id corchetes fin_parametro 
             {
               String RESULT =null;
-
+		int e52left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
+		int e52right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
+		String e52 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
+		RESULT=e52;
               CUP$parser$result = parser.getSymbolFactory().newSymbol("parametro_borrar_pagina",16, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -1989,7 +2015,67 @@ if(tieneId==true && tieneSitio==true && tienePadre==true){
           case 92: // estructura_modificar_pagina ::= inicio_modificar_pagina parametros_modificar_pagina 
             {
               String RESULT =null;
-		System.out.println("Se encontro un modificar pagina");
+		
+
+
+boolean tieneId=false,tieneTitulo=false,tieneFechaModificacion=false,tieneUsuarioModificacion=false;
+boolean error=false;
+
+String id=null,titulo=null,usuarioModificacion=null;
+Date fechaModificacion=null;
+
+for(int i=0;i<parametros.size();i++){
+	if(parametros.get(i).getNombre().equals("ID")){
+		if(tieneId==false){
+			tieneId=true;
+			id = parametros.get(i).getLexema();
+		}else{
+			error=true;
+		}
+	}else if(parametros.get(i).getNombre().equals("TITULO")){
+		if(tieneTitulo==false){
+			tieneTitulo=true;
+			titulo = parametros.get(i).getLexema();
+		}else{
+			error=true;
+		}
+	}
+}
+
+if(tieneId==true){
+	
+	if(tieneUsuarioModificacion==false){
+		usuarioModificacion = usuarioModificacionGlobal;
+	}
+	if(tieneFechaModificacion==false){
+		fechaModificacion = fechaActual;
+	}
+	
+	
+	if(error==false){
+
+	if(tieneTitulo==false && etiquetas.isEmpty()){
+		System.out.println("NO HAY NI TITULO NI ETIQUETAS QUE CAMBIAR");
+	}else{
+		ModificarPagina pagina = new ModificarPagina(id,titulo,usuarioModificacion,fechaModificacion,etiquetas);
+		acciones.accionModificarPagina(pagina);
+	
+	}
+
+	}else{
+		System.out.println("HAY CAMPOS REPETIDOS");
+	}
+	
+}else{
+	System.out.println("FALTAN PARAMETROS OBLIGATORIOS");
+	error=true;
+}
+	
+	etiquetas.clear();
+	parametros.clear();
+
+
+
               CUP$parser$result = parser.getSymbolFactory().newSymbol("estructura_modificar_pagina",17, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -2016,7 +2102,10 @@ if(tieneId==true && tieneSitio==true && tienePadre==true){
           case 95: // parametro_modificar_pagina ::= parametro_modificar_pagina inicio_parametro_id corchetes fin_parametro 
             {
               String RESULT =null;
-
+		int e55left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
+		int e55right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
+		String e55 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
+		crearParametro("ID",e55);
               CUP$parser$result = parser.getSymbolFactory().newSymbol("parametro_modificar_pagina",20, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -2025,7 +2114,10 @@ if(tieneId==true && tieneSitio==true && tienePadre==true){
           case 96: // parametro_modificar_pagina ::= parametro_modificar_pagina inicio_parametro_titulo corchetes_varias_palabras fin_parametro 
             {
               String RESULT =null;
-
+		int e56left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
+		int e56right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
+		String e56 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
+		crearParametro("TITULO",e56);
               CUP$parser$result = parser.getSymbolFactory().newSymbol("parametro_modificar_pagina",20, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -2034,7 +2126,10 @@ if(tieneId==true && tieneSitio==true && tienePadre==true){
           case 97: // parametro_modificar_pagina ::= inicio_parametro_id corchetes fin_parametro 
             {
               String RESULT =null;
-
+		int e57left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
+		int e57right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
+		String e57 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
+		crearParametro("ID",e57);
               CUP$parser$result = parser.getSymbolFactory().newSymbol("parametro_modificar_pagina",20, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -2043,7 +2138,10 @@ if(tieneId==true && tieneSitio==true && tienePadre==true){
           case 98: // parametro_modificar_pagina ::= inicio_parametro_titulo corchetes_varias_palabras fin_parametro 
             {
               String RESULT =null;
-
+		int e58left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
+		int e58right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
+		String e58 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
+		crearParametro("TITULO",e58);
               CUP$parser$result = parser.getSymbolFactory().newSymbol("parametro_modificar_pagina",20, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -2052,6 +2150,255 @@ if(tieneId==true && tieneSitio==true && tienePadre==true){
           case 99: // estructura_agregar_componente ::= inicio_agregar_componente opcion_agregar_componente fin_accion 
             {
               String RESULT =null;
+		
+
+
+
+boolean tieneId=false,tienePagina=false,tieneClase=false;
+boolean error=false;
+
+String id=null,pagina=null,clase=null;
+
+ComponenteMenu compMenu=null;
+ComponenteParrafo compParrafo=null;
+ComponenteImagen compImagen=null;
+ComponenteVideo compVideo=null;
+ComponenteTitulo compTitulo=null;
+
+boolean tieneTexto=false,tieneAlineacion=false,tieneColor=false,tieneOrigen=false,tieneAltura=false,tieneAncho=false,tienePadre=false,tieneEtiquetas=false;
+
+String texto=null, alineacion=null,color=null,origen=null,altura=null,ancho=null,padre=null;
+for(int i=0;i<parametros.size();i++){
+	if(parametros.get(i).getNombre().equals("ID")){
+		if(tieneId==false){
+			tieneId=true;
+			id = parametros.get(i).getLexema();
+		}else{
+			error=true;
+		}
+	}else if(parametros.get(i).getNombre().equals("PAGINA")){
+		if(tienePagina==false){
+			tienePagina=true;
+			pagina = parametros.get(i).getLexema();
+		}else{
+			error=true;
+		}
+	}else if(parametros.get(i).getNombre().equals("CLASE")){
+		if(tieneClase==false){
+			tieneClase=true;
+			clase = parametros.get(i).getLexema();
+		}else{
+			error=true;
+		}
+	}
+}
+
+if(tieneId==true && tienePagina==true && tieneClase==true){
+	
+	if(error==false){
+		
+	
+	if(clase.equals("TITULO")){
+		for(int i=0;i<atributos.size();i++){
+			if(atributos.get(i).getNombre().equals("TEXTO")){
+				if(tieneTexto==false){
+					tieneTexto=true;
+					texto = atributos.get(i).getLexema();
+				}else{
+					error=true;
+				}
+			}else if(atributos.get(i).getNombre().equals("ALINEACION")){
+				if(tieneAlineacion==false){
+					tieneAlineacion=true;
+					alineacion = atributos.get(i).getLexema();
+				}else{
+					error=true;
+				}
+			}
+		}
+		
+		if(tieneTexto==true){
+			if(error==false){
+				compTitulo = new ComponenteTitulo(texto,alineacion);
+			}else{
+				System.out.println("HAY CAMPOS REPETIDOS");
+			}
+		}else{
+			System.out.println("FALTAN ATRIBUTOS OBLIGATORIOS PARA TITULO");
+		}
+		
+	
+	}else if(clase.equals("PARRAFO")){
+		for(int i=0;i<atributos.size();i++){
+			if(atributos.get(i).getNombre().equals("TEXTO")){
+				if(tieneTexto==false){
+					tieneTexto=true;
+					texto = atributos.get(i).getLexema();
+				}else{
+					error=true;
+				}
+			}else if(atributos.get(i).getNombre().equals("ALINEACION")){
+				if(tieneAlineacion==false){
+					tieneAlineacion=true;
+					alineacion = atributos.get(i).getLexema();
+				}else{
+					error=true;
+				}
+			}else if(atributos.get(i).getNombre().equals("COLOR")){
+				if(tieneColor==false){
+					tieneColor=true;
+					color = atributos.get(i).getLexema();
+				}else{
+					error=true;
+				}
+			}
+		}
+		
+		if(tieneTexto==true){
+			if(error==false){
+				compParrafo = new ComponenteParrafo(texto,alineacion,color);
+			}else{
+				System.out.println("HAY CAMPOS REPETIDOS");
+			}
+		}else{
+			System.out.println("FALTAN ATRIBUTOS OBLIGATORIOS PARA PARRAFO");
+		}
+	
+	
+	}else if(clase.equals("IMAGEN")){
+		for(int i=0;i<atributos.size();i++){
+			if(atributos.get(i).getNombre().equals("ORIGEN")){
+				if(tieneOrigen==false){
+					tieneOrigen=true;
+					origen = atributos.get(i).getLexema();
+				}else{
+					error=true;
+				}
+			}else if(atributos.get(i).getNombre().equals("ALINEACION")){
+				if(tieneAlineacion==false){
+					tieneAlineacion=true;
+					alineacion = atributos.get(i).getLexema();
+				}else{
+					error=true;
+				}
+			}else if(atributos.get(i).getNombre().equals("ALTURA")){
+				if(tieneAltura==false){
+					tieneAltura=true;
+					altura = atributos.get(i).getLexema();
+				}else{
+					error=true;
+				}
+			}else if(atributos.get(i).getNombre().equals("ANCHO")){
+				if(tieneAncho==false){
+					tieneAncho=true;
+					ancho = atributos.get(i).getLexema();
+				}else{
+					error=true;
+				}
+			}
+		}
+		
+		if(tieneOrigen==true && tieneAncho==true && tieneAltura==true){
+			if(error==false){
+				compImagen = new ComponenteImagen(texto,alineacion,Integer.parseInt(altura),Integer.parseInt(ancho));
+			}else{
+				System.out.println("HAY CAMPOS REPETIDOS");
+			}
+		}else{
+			System.out.println("FALTAN ATRIBUTOS OBLIGATORIOS PARA IMAGEN");
+		}
+	
+	
+	}else if(clase.equals("VIDEO")){
+		for(int i=0;i<atributos.size();i++){
+			if(atributos.get(i).getNombre().equals("ORIGEN")){
+				if(tieneOrigen==false){
+					tieneOrigen=true;
+					origen = atributos.get(i).getLexema();
+				}else{
+					error=true;
+				}
+			}else if(atributos.get(i).getNombre().equals("ALTURA")){
+				if(tieneAltura==false){
+					tieneAltura=true;
+					altura = atributos.get(i).getLexema();
+				}else{
+					error=true;
+				}
+			}else if(atributos.get(i).getNombre().equals("ANCHO")){
+				if(tieneAncho==false){
+					tieneAncho=true;
+					ancho = atributos.get(i).getLexema();
+				}else{
+					error=true;
+				}
+			}
+		}
+		
+		if(tieneOrigen==true && tieneAncho==true && tieneAltura==true){
+			if(error==false){
+				compVideo = new ComponenteVideo(texto,Integer.parseInt(altura),Integer.parseInt(ancho));
+			}else{
+				System.out.println("HAY CAMPOS REPETIDOS");
+			}
+		}else{
+			System.out.println("FALTAN ATRIBUTOS OBLIGATORIOS PARA VIDEO");
+		}
+
+	}else if(clase.equals("MENU")){
+		for(int i=0;i<atributos.size();i++){
+			if(atributos.get(i).getNombre().equals("PADRE")){
+				if(tienePadre==false){
+					tienePadre=true;
+					padre = atributos.get(i).getLexema();
+				}else{
+					error=true;
+				}
+			}else if(atributos.get(i).getNombre().equals("ETIQUETAS")){
+				if(tieneEtiquetas==false){
+					tieneEtiquetas=true;
+				}else{
+					error=true;
+				}
+			}
+		}
+		
+		if(tienePadre==true || tieneEtiquetas==true){
+			if(error==false){
+				compMenu = new ComponenteMenu(padre,etiquetas);
+			}else{
+				System.out.println("HAY CAMPOS REPETIDOS");
+			}
+		}else{
+			System.out.println("FALTAN ATRIBUTOS OBLIGATORIOS PARA MENU");
+		}
+	}
+
+		
+	}else{
+		System.out.println("HAY CAMPOS REPETIDOS");
+	}
+	
+	if(error==false){
+	
+	AgregarComponente componente = new AgregarComponente(id,pagina,clase,compTitulo,compParrafo,compImagen,compVideo,compMenu);
+	acciones.accionAgregarComponente(componente);
+	
+	}else{
+		System.out.println("HAY ERRORES PARA AGREGAR COMPONENTE");
+	}
+	
+}else{
+	System.out.println("FALTAN PARAMETROS OBLIGATORIOS");
+	error=true;
+}
+	
+	etiquetas.clear();
+	parametros.clear();
+	atributos.clear();
+
+
+
 
               CUP$parser$result = parser.getSymbolFactory().newSymbol("estructura_agregar_componente",21, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
@@ -2070,7 +2417,10 @@ if(tieneId==true && tieneSitio==true && tienePadre==true){
           case 101: // parametro_id_componente ::= inicio_parametro_id corchete_id fin_parametro parametro_pagina 
             {
               String RESULT =null;
-
+		int e58left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)).left;
+		int e58right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)).right;
+		String e58 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-2)).value;
+		crearParametro("ID",e58);
               CUP$parser$result = parser.getSymbolFactory().newSymbol("parametro_id_componente",23, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -2079,7 +2429,10 @@ if(tieneId==true && tieneSitio==true && tienePadre==true){
           case 102: // parametro_pagina ::= inicio_parametro_pagina corchete_id fin_parametro parametro_clase 
             {
               String RESULT =null;
-
+		int e59left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)).left;
+		int e59right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)).right;
+		String e59 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-2)).value;
+		crearParametro("PAGINA",e59);
               CUP$parser$result = parser.getSymbolFactory().newSymbol("parametro_pagina",24, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -2133,7 +2486,10 @@ if(tieneId==true && tieneSitio==true && tienePadre==true){
           case 108: // parametro_clase_titulo ::= corchete_titulo fin_parametro fin_parametros atributos_titulo 
             {
               String RESULT =null;
-
+		int e60left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)).left;
+		int e60right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)).right;
+		String e60 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-3)).value;
+		crearParametro("CLASE",e60);
               CUP$parser$result = parser.getSymbolFactory().newSymbol("parametro_clase_titulo",26, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -2151,7 +2507,10 @@ if(tieneId==true && tieneSitio==true && tienePadre==true){
           case 110: // atributo_titulo ::= atributo_titulo inicio_atributo_texto corchetes_varias_palabras fin_atributo 
             {
               String RESULT =null;
-
+		int e61left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
+		int e61right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
+		String e61 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
+		crearAtributo("TEXTO",e61);
               CUP$parser$result = parser.getSymbolFactory().newSymbol("atributo_titulo",28, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -2160,7 +2519,10 @@ if(tieneId==true && tieneSitio==true && tienePadre==true){
           case 111: // atributo_titulo ::= atributo_titulo inicio_atributo_alineacion corchetes_alineacion fin_atributo 
             {
               String RESULT =null;
-
+		int e62left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
+		int e62right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
+		String e62 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
+		crearAtributo("ALINEACION",e62);
               CUP$parser$result = parser.getSymbolFactory().newSymbol("atributo_titulo",28, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -2169,7 +2531,10 @@ if(tieneId==true && tieneSitio==true && tienePadre==true){
           case 112: // atributo_titulo ::= inicio_atributo_texto corchetes_varias_palabras fin_atributo 
             {
               String RESULT =null;
-
+		int e63left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
+		int e63right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
+		String e63 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
+		crearAtributo("TEXTO",e63);
               CUP$parser$result = parser.getSymbolFactory().newSymbol("atributo_titulo",28, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -2178,7 +2543,10 @@ if(tieneId==true && tieneSitio==true && tienePadre==true){
           case 113: // atributo_titulo ::= inicio_atributo_alineacion corchetes_alineacion fin_atributo 
             {
               String RESULT =null;
-
+		int e64left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
+		int e64right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
+		String e64 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
+		crearAtributo("ALINEACION",e64);
               CUP$parser$result = parser.getSymbolFactory().newSymbol("atributo_titulo",28, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -2187,7 +2555,10 @@ if(tieneId==true && tieneSitio==true && tienePadre==true){
           case 114: // corchetes_alineacion ::= corchete_derecha 
             {
               String RESULT =null;
-
+		int e65left = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
+		int e65right = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
+		String e65 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
+		RESULT = e65;
               CUP$parser$result = parser.getSymbolFactory().newSymbol("corchetes_alineacion",29, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -2196,7 +2567,10 @@ if(tieneId==true && tieneSitio==true && tienePadre==true){
           case 115: // corchetes_alineacion ::= corchete_izquierda 
             {
               String RESULT =null;
-
+		int e66left = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
+		int e66right = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
+		String e66 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
+		RESULT = e66;
               CUP$parser$result = parser.getSymbolFactory().newSymbol("corchetes_alineacion",29, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -2205,7 +2579,10 @@ if(tieneId==true && tieneSitio==true && tienePadre==true){
           case 116: // corchetes_alineacion ::= corchete_centrar 
             {
               String RESULT =null;
-
+		int e67left = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
+		int e67right = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
+		String e67 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
+		RESULT = e67;
               CUP$parser$result = parser.getSymbolFactory().newSymbol("corchetes_alineacion",29, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -2214,7 +2591,10 @@ if(tieneId==true && tieneSitio==true && tienePadre==true){
           case 117: // corchetes_alineacion ::= corchete_justificar 
             {
               String RESULT =null;
-
+		int e68left = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
+		int e68right = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
+		String e68 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
+		RESULT = e68;
               CUP$parser$result = parser.getSymbolFactory().newSymbol("corchetes_alineacion",29, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -2223,7 +2603,10 @@ if(tieneId==true && tieneSitio==true && tienePadre==true){
           case 118: // parametro_clase_parrafo ::= corchete_parrafo fin_parametro fin_parametros atributos_parrafo 
             {
               String RESULT =null;
-
+		int e68left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)).left;
+		int e68right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)).right;
+		String e68 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-3)).value;
+		crearParametro("CLASE",e68);
               CUP$parser$result = parser.getSymbolFactory().newSymbol("parametro_clase_parrafo",30, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -2241,7 +2624,10 @@ if(tieneId==true && tieneSitio==true && tienePadre==true){
           case 120: // atributo_parrafo ::= atributo_parrafo inicio_atributo_texto corchetes_varias_palabras fin_atributo 
             {
               String RESULT =null;
-
+		int e69left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
+		int e69right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
+		String e69 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
+		crearAtributo("TEXTO",e69);
               CUP$parser$result = parser.getSymbolFactory().newSymbol("atributo_parrafo",32, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -2250,7 +2636,10 @@ if(tieneId==true && tieneSitio==true && tienePadre==true){
           case 121: // atributo_parrafo ::= atributo_parrafo inicio_atributo_alineacion corchetes_alineacion fin_atributo 
             {
               String RESULT =null;
-
+		int e70left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
+		int e70right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
+		String e70 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
+		crearAtributo("ALINEACION",e70);
               CUP$parser$result = parser.getSymbolFactory().newSymbol("atributo_parrafo",32, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -2259,7 +2648,10 @@ if(tieneId==true && tieneSitio==true && tienePadre==true){
           case 122: // atributo_parrafo ::= atributo_parrafo inicio_atributo_color corchete_hexadecimal fin_atributo 
             {
               String RESULT =null;
-
+		int e71left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
+		int e71right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
+		String e71 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
+		crearAtributo("COLOR",e71);
               CUP$parser$result = parser.getSymbolFactory().newSymbol("atributo_parrafo",32, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -2268,7 +2660,10 @@ if(tieneId==true && tieneSitio==true && tienePadre==true){
           case 123: // atributo_parrafo ::= inicio_atributo_texto corchetes_varias_palabras fin_atributo 
             {
               String RESULT =null;
-
+		int e72left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
+		int e72right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
+		String e72 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
+		crearAtributo("TEXTO",e72);
               CUP$parser$result = parser.getSymbolFactory().newSymbol("atributo_parrafo",32, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -2277,7 +2672,10 @@ if(tieneId==true && tieneSitio==true && tienePadre==true){
           case 124: // atributo_parrafo ::= inicio_atributo_alineacion corchetes_alineacion fin_atributo 
             {
               String RESULT =null;
-
+		int e73left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
+		int e73right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
+		String e73 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
+		crearAtributo("ALINEACION",e73);
               CUP$parser$result = parser.getSymbolFactory().newSymbol("atributo_parrafo",32, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -2286,7 +2684,10 @@ if(tieneId==true && tieneSitio==true && tienePadre==true){
           case 125: // atributo_parrafo ::= inicio_atributo_color corchete_hexadecimal fin_atributo 
             {
               String RESULT =null;
-
+		int e74left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
+		int e74right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
+		String e74 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
+		crearAtributo("COLOR",e74);
               CUP$parser$result = parser.getSymbolFactory().newSymbol("atributo_parrafo",32, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -2295,7 +2696,10 @@ if(tieneId==true && tieneSitio==true && tienePadre==true){
           case 126: // parametro_clase_imagen ::= corchete_imagen fin_parametro fin_parametros atributos_imagen 
             {
               String RESULT =null;
-
+		int e75left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)).left;
+		int e75right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)).right;
+		String e75 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-3)).value;
+		crearParametro("CLASE",e75);
               CUP$parser$result = parser.getSymbolFactory().newSymbol("parametro_clase_imagen",33, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -2313,7 +2717,10 @@ if(tieneId==true && tieneSitio==true && tienePadre==true){
           case 128: // atributo_imagen ::= atributo_imagen inicio_atributo_origen corchete_origen fin_atributo 
             {
               String RESULT =null;
-
+		int e76left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
+		int e76right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
+		String e76 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
+		crearAtributo("ORIGEN",e76);
               CUP$parser$result = parser.getSymbolFactory().newSymbol("atributo_imagen",35, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -2322,7 +2729,10 @@ if(tieneId==true && tieneSitio==true && tienePadre==true){
           case 129: // atributo_imagen ::= atributo_imagen inicio_atributo_alineacion corchetes_alineacion fin_atributo 
             {
               String RESULT =null;
-
+		int e77left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
+		int e77right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
+		String e77 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
+		crearAtributo("ALINEACION",e77);
               CUP$parser$result = parser.getSymbolFactory().newSymbol("atributo_imagen",35, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -2331,7 +2741,10 @@ if(tieneId==true && tieneSitio==true && tienePadre==true){
           case 130: // atributo_imagen ::= atributo_imagen inicio_atributo_altura corchete_numeros fin_atributo 
             {
               String RESULT =null;
-
+		int e78left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
+		int e78right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
+		String e78 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
+		crearAtributo("ALTURA",e78);
               CUP$parser$result = parser.getSymbolFactory().newSymbol("atributo_imagen",35, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -2340,7 +2753,10 @@ if(tieneId==true && tieneSitio==true && tienePadre==true){
           case 131: // atributo_imagen ::= atributo_imagen inicio_atributo_ancho corchete_numeros fin_atributo 
             {
               String RESULT =null;
-
+		int e79left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
+		int e79right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
+		String e79 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
+		crearAtributo("ANCHO",e79);
               CUP$parser$result = parser.getSymbolFactory().newSymbol("atributo_imagen",35, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -2349,7 +2765,10 @@ if(tieneId==true && tieneSitio==true && tienePadre==true){
           case 132: // atributo_imagen ::= inicio_atributo_origen corchete_origen fin_atributo 
             {
               String RESULT =null;
-
+		int e80left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
+		int e80right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
+		String e80 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
+		crearAtributo("ORIGEN",e80);
               CUP$parser$result = parser.getSymbolFactory().newSymbol("atributo_imagen",35, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -2358,7 +2777,10 @@ if(tieneId==true && tieneSitio==true && tienePadre==true){
           case 133: // atributo_imagen ::= inicio_atributo_alineacion corchetes_alineacion fin_atributo 
             {
               String RESULT =null;
-
+		int e81left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
+		int e81right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
+		String e81 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
+		crearAtributo("ALINEACION",e81);
               CUP$parser$result = parser.getSymbolFactory().newSymbol("atributo_imagen",35, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -2367,7 +2789,10 @@ if(tieneId==true && tieneSitio==true && tienePadre==true){
           case 134: // atributo_imagen ::= inicio_atributo_altura corchete_numeros fin_atributo 
             {
               String RESULT =null;
-
+		int e82left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
+		int e82right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
+		String e82 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
+		crearAtributo("ALTURA",e82);
               CUP$parser$result = parser.getSymbolFactory().newSymbol("atributo_imagen",35, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -2376,7 +2801,10 @@ if(tieneId==true && tieneSitio==true && tienePadre==true){
           case 135: // atributo_imagen ::= inicio_atributo_ancho corchete_numeros fin_atributo 
             {
               String RESULT =null;
-
+		int e83left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
+		int e83right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
+		String e83 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
+		crearAtributo("ANCHO",e83);
               CUP$parser$result = parser.getSymbolFactory().newSymbol("atributo_imagen",35, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -2385,7 +2813,10 @@ if(tieneId==true && tieneSitio==true && tienePadre==true){
           case 136: // parametro_clase_video ::= corchete_video fin_parametro fin_parametros atributos_video 
             {
               String RESULT =null;
-
+		int e84left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)).left;
+		int e84right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)).right;
+		String e84 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-3)).value;
+		crearParametro("CLASE",e84);
               CUP$parser$result = parser.getSymbolFactory().newSymbol("parametro_clase_video",36, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -2403,7 +2834,10 @@ if(tieneId==true && tieneSitio==true && tienePadre==true){
           case 138: // atributo_video ::= atributo_video inicio_atributo_origen corchete_origen fin_atributo 
             {
               String RESULT =null;
-
+		int e85left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
+		int e85right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
+		String e85 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
+		crearAtributo("ORIGEN",e85);
               CUP$parser$result = parser.getSymbolFactory().newSymbol("atributo_video",38, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -2412,7 +2846,10 @@ if(tieneId==true && tieneSitio==true && tienePadre==true){
           case 139: // atributo_video ::= atributo_video inicio_atributo_ancho corchete_numeros fin_atributo 
             {
               String RESULT =null;
-
+		int e86left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
+		int e86right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
+		String e86 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
+		crearAtributo("ANCHO",e86);
               CUP$parser$result = parser.getSymbolFactory().newSymbol("atributo_video",38, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -2421,7 +2858,10 @@ if(tieneId==true && tieneSitio==true && tienePadre==true){
           case 140: // atributo_video ::= atributo_video inicio_atributo_altura corchete_numeros fin_atributo 
             {
               String RESULT =null;
-
+		int e87left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
+		int e87right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
+		String e87 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
+		crearAtributo("ALTURA",e87);
               CUP$parser$result = parser.getSymbolFactory().newSymbol("atributo_video",38, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -2430,7 +2870,10 @@ if(tieneId==true && tieneSitio==true && tienePadre==true){
           case 141: // atributo_video ::= inicio_atributo_origen corchete_origen fin_atributo 
             {
               String RESULT =null;
-
+		int e88left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
+		int e88right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
+		String e88 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
+		crearAtributo("ORIGEN",e88);
               CUP$parser$result = parser.getSymbolFactory().newSymbol("atributo_video",38, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -2439,7 +2882,10 @@ if(tieneId==true && tieneSitio==true && tienePadre==true){
           case 142: // atributo_video ::= inicio_atributo_ancho corchete_numeros fin_atributo 
             {
               String RESULT =null;
-
+		int e89left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
+		int e89right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
+		String e89 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
+		crearAtributo("ANCHO",e89);
               CUP$parser$result = parser.getSymbolFactory().newSymbol("atributo_video",38, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -2448,7 +2894,10 @@ if(tieneId==true && tieneSitio==true && tienePadre==true){
           case 143: // atributo_video ::= inicio_atributo_altura corchete_numeros fin_atributo 
             {
               String RESULT =null;
-
+		int e90left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
+		int e90right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
+		String e90 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
+		crearAtributo("ALTURA",e90);
               CUP$parser$result = parser.getSymbolFactory().newSymbol("atributo_video",38, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -2457,7 +2906,10 @@ if(tieneId==true && tieneSitio==true && tienePadre==true){
           case 144: // parametro_clase_menu ::= corchete_menu fin_parametro fin_parametros atributos_menu 
             {
               String RESULT =null;
-
+		int e91left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)).left;
+		int e91right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)).right;
+		String e91 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-3)).value;
+		crearParametro("CLASE",e91);
               CUP$parser$result = parser.getSymbolFactory().newSymbol("parametro_clase_menu",39, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -2475,7 +2927,10 @@ if(tieneId==true && tieneSitio==true && tienePadre==true){
           case 146: // atributo_menu ::= atributo_menu inicio_atributo_padre corchete_id fin_atributo 
             {
               String RESULT =null;
-
+		int e92left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
+		int e92right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
+		String e92 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
+		crearAtributo("PADRE",e92);
               CUP$parser$result = parser.getSymbolFactory().newSymbol("atributo_menu",41, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -2484,7 +2939,7 @@ if(tieneId==true && tieneSitio==true && tienePadre==true){
           case 147: // atributo_menu ::= atributo_menu inicio_atributo_etiquetas corchetes_etiquetas fin_atributo 
             {
               String RESULT =null;
-
+		crearAtributo("ETIQUETAS","ETIQUETAS");
               CUP$parser$result = parser.getSymbolFactory().newSymbol("atributo_menu",41, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -2493,7 +2948,10 @@ if(tieneId==true && tieneSitio==true && tienePadre==true){
           case 148: // atributo_menu ::= inicio_atributo_padre corchete_id fin_atributo 
             {
               String RESULT =null;
-
+		int e93left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
+		int e93right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
+		String e93 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
+		crearAtributo("PADRE",e93);
               CUP$parser$result = parser.getSymbolFactory().newSymbol("atributo_menu",41, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -2502,7 +2960,7 @@ if(tieneId==true && tieneSitio==true && tienePadre==true){
           case 149: // atributo_menu ::= inicio_atributo_etiquetas corchetes_etiquetas fin_atributo 
             {
               String RESULT =null;
-
+		crearAtributo("ETIQUETAS","ETIQUETAS");
               CUP$parser$result = parser.getSymbolFactory().newSymbol("atributo_menu",41, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -2520,7 +2978,10 @@ if(tieneId==true && tieneSitio==true && tienePadre==true){
           case 151: // corchetes_etiquetas ::= corchete_id 
             {
               String RESULT =null;
-
+		int e94left = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
+		int e94right = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
+		String e94 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
+		crearEtiqueta(e94);
               CUP$parser$result = parser.getSymbolFactory().newSymbol("corchetes_etiquetas",42, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -2835,7 +3296,10 @@ if(tieneId==true && tieneSitio==true && tienePadre==true){
           case 185: // concatenacion_corchetes ::= concatenacion_corchetes PIPE IDD 
             {
               String RESULT =null;
-
+		int e1left = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
+		int e1right = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
+		String e1 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
+		crearEtiqueta(e1);
               CUP$parser$result = parser.getSymbolFactory().newSymbol("concatenacion_corchetes",100, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -2844,7 +3308,10 @@ if(tieneId==true && tieneSitio==true && tienePadre==true){
           case 186: // concatenacion_corchetes ::= corchete_id 
             {
               String RESULT =null;
-
+		int e2left = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
+		int e2right = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
+		String e2 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
+		crearEtiqueta(e2);
               CUP$parser$result = parser.getSymbolFactory().newSymbol("concatenacion_corchetes",100, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -2853,7 +3320,13 @@ if(tieneId==true && tieneSitio==true && tienePadre==true){
           case 187: // concatenacion_corchetes ::= IDD PIPE IDD 
             {
               String RESULT =null;
-
+		int e3left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)).left;
+		int e3right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)).right;
+		String e3 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-2)).value;
+		int e4left = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
+		int e4right = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
+		String e4 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
+		crearEtiqueta(e3); crearEtiqueta(e4);
               CUP$parser$result = parser.getSymbolFactory().newSymbol("concatenacion_corchetes",100, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;

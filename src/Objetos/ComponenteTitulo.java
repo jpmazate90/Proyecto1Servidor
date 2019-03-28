@@ -9,10 +9,17 @@ public class ComponenteTitulo {
     
     private String texto;
     private String alineacion;
+    
+    private boolean tieneAlineacion;
 
     public ComponenteTitulo(String texto, String alineacion) {
         this.texto = texto;
         this.alineacion = alineacion;
+        if(alineacion==null){
+            tieneAlineacion=false;
+        }else{
+            tieneAlineacion=true;
+        }
     }
 
     public String getTexto() {
@@ -30,6 +37,15 @@ public class ComponenteTitulo {
     public void setAlineacion(String alineacion) {
         this.alineacion = alineacion;
     }
+
+    public boolean isTieneAlineacion() {
+        return tieneAlineacion;
+    }
+
+    public void setTieneAlineacion(boolean tieneAlineacion) {
+        this.tieneAlineacion = tieneAlineacion;
+    }
+    
     
     
     

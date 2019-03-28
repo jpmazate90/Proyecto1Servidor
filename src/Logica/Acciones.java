@@ -5,7 +5,10 @@
  */
 package Logica;
 
+import Objetos.AgregarComponente;
+import Objetos.BorrarPagina;
 import Objetos.BorrarSitioWeb;
+import Objetos.ModificarPagina;
 import Objetos.NuevaPagina;
 import Objetos.NuevoSitioWeb;
 
@@ -29,4 +32,13 @@ public class Acciones {
         System.out.println("Accion nuevaPagina, id:"+nuevaPagina.getId());
     }
     
+    public void accionBorrarPagina(BorrarPagina borrarPagina){
+        System.out.println("Accion borrarPagina, id:"+borrarPagina.getId());
+    }
+    public void accionModificarPagina(ModificarPagina modificarPagina){
+        System.out.println("Accion modificarPagina, id:"+modificarPagina.getId());
+    }
+    public void accionAgregarComponente(AgregarComponente agregarComponente){
+        System.out.println("Accion agregarComponente, id:"+agregarComponente.getId());
+    }
 }
