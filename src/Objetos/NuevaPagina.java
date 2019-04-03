@@ -32,6 +32,8 @@ public class NuevaPagina {
         this.fechaModificacion = fechaModificacion;
         this.usuarioModificacion = usuarioModificacion;
         this.etiquetas = etiquetas;
+        
+        
     }
 
     public String getLink() {
@@ -107,6 +109,15 @@ public class NuevaPagina {
     public void setEtiquetas(ArrayList<String> etiquetas) {
         this.etiquetas = etiquetas;
     }
+
+    public String getSitio() {
+        return sitio;
+    }
+
+    public void setSitio(String sitio) {
+        this.sitio = sitio;
+    }
+    
     
     
     

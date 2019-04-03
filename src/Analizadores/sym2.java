@@ -8,41 +8,56 @@ package Analizadores;
 /** CUP generated class containing symbol constants. */
 public class sym2 {
   /* terminals */
-  public static final int FIN_TITULO = 19;
-  public static final int INICIO_USUARIO_MODIFICACION = 12;
-  public static final int IDD = 30;
-  public static final int INICIO_PAGINA = 14;
-  public static final int INICIO_TITULO = 18;
-  public static final int INICIO_FECHA_CREACION = 8;
-  public static final int INICIO_ID = 4;
-  public static final int INICIO_SITIO = 2;
-  public static final int FIN_FECHA_CREACION = 9;
-  public static final int INICIO_ETIQUETA = 24;
-  public static final int FIN_PADRE = 21;
+  public static final int FIN_PAGINA = 15;
   public static final int FIN_USUARIO_CREACION = 7;
   public static final int FIN_COMPONENTE = 27;
-  public static final int FIN_LINK = 17;
-  public static final int INICIO_LINK = 16;
-  public static final int FIN_ETIQUETAS = 23;
-  public static final int INICIO_ETIQUETAS = 22;
-  public static final int FIN_FECHA_MODIFICACION = 11;
-  public static final int FIN_ID = 5;
-  public static final int INICIO_PADRE = 20;
-  public static final int EOF = 0;
-  public static final int FIN_CLASE = 29;
-  public static final int FIN_PAGINA_WEB = 34;
-  public static final int FIN_SITIO_WEB = 32;
-  public static final int INICIO_SITIO_WEB = 31;
-  public static final int error = 1;
-  public static final int INICIO_COMPONENTE = 26;
-  public static final int FIN_USUARIO_MODIFICACION = 13;
-  public static final int INICIO_CLASE = 28;
-  public static final int FIN_SITIO = 3;
-  public static final int INICIO_PAGINA_WEB = 33;
-  public static final int INICIO_USUARIO_CREACION = 6;
   public static final int INICIO_FECHA_MODIFICACION = 10;
   public static final int FIN_ETIQUETA = 25;
-  public static final int FIN_PAGINA = 15;
+  public static final int FIN_PADRE = 21;
+  public static final int INICIO_ANCHO = 47;
+  public static final int INICIO_FECHA_CREACION = 8;
+  public static final int INICIO_USUARIO_MODIFICACION = 12;
+  public static final int FIN_SITIO_WEB = 32;
+  public static final int INICIO_ORIGEN = 43;
+  public static final int FIN_CLASE = 29;
+  public static final int INICIO_ALINEACION = 39;
+  public static final int FIN_TITULO = 19;
+  public static final int FIN_COLOR = 42;
+  public static final int FIN_ETIQUETAS = 23;
+  public static final int FIN_FECHA_MODIFICACION = 11;
+  public static final int FIN_LINK = 17;
+  public static final int INICIO_ALTURA = 45;
+  public static final int INICIO_PAGINA_WEB = 33;
+  public static final int FIN_USUARIO_MODIFICACION = 13;
+  public static final int INICIO_PADRE = 20;
+  public static final int EOF = 0;
+  public static final int INICIO_ETIQUETA = 24;
+  public static final int error = 1;
+  public static final int PIPE = 49;
+  public static final int INICIO_PAGINA = 14;
+  public static final int INICIO_CLASE = 28;
+  public static final int FIN_ID = 5;
+  public static final int FIN_SITIO = 3;
+  public static final int INICIO_COMPONENTE = 26;
+  public static final int INICIO_USUARIO_CREACION = 6;
+  public static final int IDD = 30;
+  public static final int FIN_TEXTO = 38;
+  public static final int INICIO_SITIO_WEB = 31;
+  public static final int INICIO_COLOR = 41;
+  public static final int FIN_ORIGEN = 44;
+  public static final int FIN_TITULO_PAGINA = 36;
+  public static final int FIN_ALINEACION = 40;
+  public static final int INICIO_TITULO_PAGINA = 35;
+  public static final int INICIO_ETIQUETAS = 22;
+  public static final int INICIO_LINK = 16;
+  public static final int INICIO_ID = 4;
+  public static final int INICIO_TITULO = 18;
+  public static final int FIN_ANCHO = 48;
+  public static final int FIN_FECHA_CREACION = 9;
+  public static final int FIN_ALTURA = 46;
+  public static final int INICIO_SITIO = 2;
+  public static final int INICIO_TEXTO = 37;
+  public static final int FIN_PAGINA_WEB = 34;
   public static final String[] terminalNames = new String[] {
   "EOF",
   "error",
@@ -78,7 +93,22 @@ public class sym2 {
   "INICIO_SITIO_WEB",
   "FIN_SITIO_WEB",
   "INICIO_PAGINA_WEB",
-  "FIN_PAGINA_WEB"
+  "FIN_PAGINA_WEB",
+  "INICIO_TITULO_PAGINA",
+  "FIN_TITULO_PAGINA",
+  "INICIO_TEXTO",
+  "FIN_TEXTO",
+  "INICIO_ALINEACION",
+  "FIN_ALINEACION",
+  "INICIO_COLOR",
+  "FIN_COLOR",
+  "INICIO_ORIGEN",
+  "FIN_ORIGEN",
+  "INICIO_ALTURA",
+  "FIN_ALTURA",
+  "INICIO_ANCHO",
+  "FIN_ANCHO",
+  "PIPE"
   };
 }
 

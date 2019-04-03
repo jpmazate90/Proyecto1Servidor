@@ -22,8 +22,9 @@ public class Pagina {
     private String  fechaModificacion;
     private String usuarioModificacion;
     private ArrayList<String> etiquetas;
+    private String titulo;
 
-    public Pagina(String id, String link, String sitio, String padre, String usuarioCreacion, String fechaCreacion, String fechaModificacion, String usuarioModificacion, ArrayList<String> etiquetas) {
+    public Pagina(String id, String link, String sitio, String padre, String usuarioCreacion, String fechaCreacion, String fechaModificacion, String usuarioModificacion, ArrayList<String> etiquetas,String titulo) {
         this.id = id;
         this.link = link;
         this.sitio = sitio;
@@ -33,6 +34,7 @@ public class Pagina {
         this.fechaModificacion = fechaModificacion;
         this.usuarioModificacion = usuarioModificacion;
         this.etiquetas = etiquetas;
+        this.titulo=titulo;
     }
 
     public String getId() {
@@ -107,6 +109,15 @@ public class Pagina {
         this.etiquetas = etiquetas;
     }
 
+    public String getTitulo() {
+        return titulo;
+    }
+
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
+    }
+
+    
     
    
     

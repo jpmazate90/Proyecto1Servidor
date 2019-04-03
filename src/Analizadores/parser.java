@@ -6,6 +6,8 @@
 package Analizadores;
 
 import Objetos.AgregarComponente;
+import Objetos.ModificarComponente;
+import Objetos.BorrarComponente;
 import Objetos.ComponenteImagen;
 import Objetos.ComponenteMenu;
 import Objetos.ComponenteParrafo;
@@ -317,8 +319,8 @@ public class parser extends java_cup.runtime.lr_parser {
     "\001\002\000\004\004\u0142\001\002\000\004\014\u0156\001" +
     "\002\000\004\053\u0151\001\002\000\004\053\u014c\001\002" +
     "\000\004\053\u014c\001\002\000\004\004\u0147\001\002\000" +
-    "\006\014\u0156\022\273\001\002\000\004\053\u0151\001\002" +
-    "\000\004\004\uff78\001\002\000\004\053\u014c\001\002\000" +
+    "\006\014\u0156\022\353\001\002\000\004\053\u0151\001\002" +
+    "\000\004\053\u014c\001\002\000\004\004\uff78\001\002\000" +
     "\004\053\u014c\001\002\000\004\056\134\001\002\000\004" +
     "\004\271\001\002\000\004\004\uff76\001\002\000\004\004" +
     "\271\001\002\000\004\004\uff75\001\002\000\004\070\u0154" +
@@ -600,9 +602,9 @@ public class parser extends java_cup.runtime.lr_parser {
     "\002\001\001\000\012\050\u0145\122\u0142\123\u0143\124\u0144" +
     "\001\001\000\002\001\001\000\004\153\u0166\001\001\000" +
     "\004\113\u0164\001\001\000\004\113\u0162\001\001\000\012" +
-    "\122\u0147\123\u0149\124\u014a\127\u0148\001\001\000\002\001" +
-    "\001\000\004\153\u0151\001\001\000\002\001\001\000\004" +
-    "\113\u014e\001\001\000\004\113\u014c\001\001\000\002\001" +
+    "\122\u0147\123\u0148\124\u014a\131\u0149\001\001\000\002\001" +
+    "\001\000\004\153\u0151\001\001\000\004\113\u014e\001\001" +
+    "\000\002\001\001\000\004\113\u014c\001\001\000\002\001" +
     "\001\000\004\127\u014d\001\001\000\002\001\001\000\004" +
     "\127\u014f\001\001\000\002\001\001\000\002\001\001\000" +
     "\004\127\u0152\001\001\000\002\001\001\000\002\001\001" +
@@ -825,8 +827,10 @@ public class parser extends java_cup.runtime.lr_parser {
 	
 	// Connect this parser to a scanner!
 
-	public parser(AnalizadorLexico1 lex) {
+	public parser(AnalizadorLexico1 lex,String usuario) {
 		super(lex);
+                this.usuarioCreacionGlobal = usuario;
+                this.usuarioModificacionGlobal = usuario;
 	}
 
         public void syntax_error(Symbol cur_token) {
@@ -1186,8 +1190,8 @@ if(tieneId==true){
 	}
 	if(error==false){
 	NuevoSitioWeb nuevo = new NuevoSitioWeb(id,usuarioCreacion,fechaCreacionDate,fechaModificacionDate,usuarioModificacion);
-	acciones.accionNuevoSitioWeb(nuevo);
-	parametros.clear();
+	acciones.accionNuevoSitioWeb(nuevo,usuarioModificacionGlobal);
+	parametros= new ArrayList<>();
 	}else{
 		System.out.println("HAY CAMPOS REPETIDOS");
 	}
@@ -1702,7 +1706,7 @@ for(int i=0;i<parametros.size();i++){
 	}
 }
 
-if(tieneId==true && tieneSitio==true && tienePadre==true){
+if(tieneId==true && tieneSitio==true){
 	if(tieneUsuarioCreacion==false){
 		usuarioCreacion = usuarioCreacionGlobal;
 	}
@@ -1718,7 +1722,7 @@ if(tieneId==true && tieneSitio==true && tienePadre==true){
 	
 	
 	if(error==false){
-	NuevaPagina pagina = new NuevaPagina(id,id,titulo,sitio,padre,usuarioCreacion,fechaCreacion,fechaModificacion,usuarioModificacion,etiquetas);
+	NuevaPagina pagina = new 		NuevaPagina(id,id,titulo,sitio,padre,usuarioCreacion,fechaCreacion,fechaModificacion,usuarioModificacion,etiquetas);
 	acciones.accionNuevaPagina(pagina);
 	}else{
 		System.out.println("HAY CAMPOS REPETIDOS");
@@ -1729,8 +1733,8 @@ if(tieneId==true && tieneSitio==true && tienePadre==true){
 	error=true;
 }
 	
-	etiquetas.clear();
-	parametros.clear();
+	etiquetas = new ArrayList<>();
+	parametros = new ArrayList<>();
 
 
 
@@ -2054,7 +2058,7 @@ if(tieneId==true){
 	
 	if(error==false){
 
-	if(tieneTitulo==false && etiquetas.isEmpty()){
+	if(tieneTitulo==false && etiquetas.size()==0){
 		System.out.println("NO HAY NI TITULO NI ETIQUETAS QUE CAMBIAR");
 	}else{
 		ModificarPagina pagina = new ModificarPagina(id,titulo,usuarioModificacion,fechaModificacion,etiquetas);
@@ -2071,8 +2075,8 @@ if(tieneId==true){
 	error=true;
 }
 	
-	etiquetas.clear();
-	parametros.clear();
+	etiquetas = new ArrayList<>();
+	parametros = new ArrayList<>();
 
 
 
@@ -2300,7 +2304,7 @@ if(tieneId==true && tienePagina==true && tieneClase==true){
 		
 		if(tieneOrigen==true && tieneAncho==true && tieneAltura==true){
 			if(error==false){
-				compImagen = new ComponenteImagen(texto,alineacion,Integer.parseInt(altura),Integer.parseInt(ancho));
+				compImagen = new ComponenteImagen(origen,alineacion,Integer.parseInt(altura),Integer.parseInt(ancho));
 			}else{
 				System.out.println("HAY CAMPOS REPETIDOS");
 			}
@@ -2337,7 +2341,7 @@ if(tieneId==true && tienePagina==true && tieneClase==true){
 		
 		if(tieneOrigen==true && tieneAncho==true && tieneAltura==true){
 			if(error==false){
-				compVideo = new ComponenteVideo(texto,Integer.parseInt(altura),Integer.parseInt(ancho));
+				compVideo = new ComponenteVideo(origen,Integer.parseInt(altura),Integer.parseInt(ancho));
 			}else{
 				System.out.println("HAY CAMPOS REPETIDOS");
 			}
@@ -2379,23 +2383,28 @@ if(tieneId==true && tienePagina==true && tieneClase==true){
 		System.out.println("HAY CAMPOS REPETIDOS");
 	}
 	
-	if(error==false){
+	if (error == false) {
+                            if (compTitulo == null && compParrafo == null && compImagen == null && compVideo == null && compMenu == null) {
+                                System.out.println("NO HAY NINGUN COMPONENTE QUE UTILIZAR");
+                            } else {
+
+                                AgregarComponente componente = new AgregarComponente(id, pagina, clase, compTitulo, compParrafo, compImagen, compVideo, compMenu);
+                                acciones.accionAgregarComponente(componente);
+                            }
+
+                        } else {
+                            System.out.println("HAY ERRORES PARA AGREGAR COMPONENTE");
+                        }
 	
-	AgregarComponente componente = new AgregarComponente(id,pagina,clase,compTitulo,compParrafo,compImagen,compVideo,compMenu);
-	acciones.accionAgregarComponente(componente);
-	
-	}else{
-		System.out.println("HAY ERRORES PARA AGREGAR COMPONENTE");
-	}
 	
 }else{
 	System.out.println("FALTAN PARAMETROS OBLIGATORIOS");
 	error=true;
 }
 	
-	etiquetas.clear();
-	parametros.clear();
-	atributos.clear();
+	etiquetas = new ArrayList<>();
+	parametros= new ArrayList<>();
+	atributos= new ArrayList<>();
 
 
 
@@ -2822,7 +2831,7 @@ if(tieneId==true && tienePagina==true && tieneClase==true){
           return CUP$parser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 137: // atributos_video ::= inicio_atributos atributo_video fin_atributo 
+          case 137: // atributos_video ::= inicio_atributos atributo_video fin_atributos 
             {
               String RESULT =null;
 
@@ -2990,6 +2999,54 @@ if(tieneId==true && tienePagina==true && tieneClase==true){
           case 152: // estructura_borrar_componente ::= inicio_borrar_componente parametros_borrar_componente fin_accion 
             {
               String RESULT =null;
+		
+
+boolean tieneId=false,tienePagina=false;
+boolean error=false;
+
+String id=null, pagina=null;
+for(int i=0;i<parametros.size();i++){
+	if(parametros.get(i).getNombre().equals("ID")){
+		if(tieneId==false){
+			tieneId=true;
+			id = parametros.get(i).getLexema();
+		}else{
+			error=true;
+		}
+	}else if(parametros.get(i).getNombre().equals("PAGINA")){
+		if(tienePagina==false){
+			tienePagina=true;
+			pagina = parametros.get(i).getLexema();
+		}else{
+			error=true;
+		}
+	}
+}
+
+if(tieneId==true && tienePagina==true){
+	
+	if(error==false){
+	
+		BorrarComponente componente = new BorrarComponente(id,pagina);
+		acciones.accionBorrarComponente(componente);
+
+	}else{
+		System.out.println("HAY CAMPOS REPETIDOS");
+	}
+	
+	
+	
+}else{
+	System.out.println("FALTAN PARAMETROS OBLIGATORIOS");
+	error=true;
+}
+	
+	etiquetas= new ArrayList<>();
+	parametros= new ArrayList<>();
+	atributos= new ArrayList<>();
+
+
+
 
               CUP$parser$result = parser.getSymbolFactory().newSymbol("estructura_borrar_componente",43, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
@@ -3008,7 +3065,10 @@ if(tieneId==true && tienePagina==true && tieneClase==true){
           case 154: // parametro_borrar_componente ::= parametro_borrar_componente inicio_parametro_id corchete_id fin_parametro 
             {
               String RESULT =null;
-
+		int e1left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
+		int e1right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
+		String e1 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
+		crearParametro("ID",e1);
               CUP$parser$result = parser.getSymbolFactory().newSymbol("parametro_borrar_componente",45, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -3017,7 +3077,10 @@ if(tieneId==true && tienePagina==true && tieneClase==true){
           case 155: // parametro_borrar_componente ::= parametro_borrar_componente inicio_parametro_pagina corchete_id fin_parametro 
             {
               String RESULT =null;
-
+		int e2left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
+		int e2right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
+		String e2 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
+		crearParametro("PAGINA",e2);
               CUP$parser$result = parser.getSymbolFactory().newSymbol("parametro_borrar_componente",45, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -3026,7 +3089,10 @@ if(tieneId==true && tienePagina==true && tieneClase==true){
           case 156: // parametro_borrar_componente ::= inicio_parametro_id corchete_id fin_parametro 
             {
               String RESULT =null;
-
+		int e3left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
+		int e3right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
+		String e3 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
+		crearParametro("ID",e3);
               CUP$parser$result = parser.getSymbolFactory().newSymbol("parametro_borrar_componente",45, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -3035,7 +3101,10 @@ if(tieneId==true && tienePagina==true && tieneClase==true){
           case 157: // parametro_borrar_componente ::= inicio_parametro_pagina corchete_id fin_parametro 
             {
               String RESULT =null;
-
+		int e4left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
+		int e4right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
+		String e4 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
+		crearParametro("PAGINA",e4);
               CUP$parser$result = parser.getSymbolFactory().newSymbol("parametro_borrar_componente",45, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -3044,6 +3113,258 @@ if(tieneId==true && tienePagina==true && tieneClase==true){
           case 158: // estructura_modificar_componente ::= inicio_modificar_componente opcion_agregar_componente fin_accion 
             {
               String RESULT =null;
+		
+
+boolean tieneId=false,tienePagina=false,tieneClase=false;
+boolean error=false;
+
+String id=null,pagina=null,clase=null;
+
+ComponenteMenu compMenu=null;
+ComponenteParrafo compParrafo=null;
+ComponenteImagen compImagen=null;
+ComponenteVideo compVideo=null;
+ComponenteTitulo compTitulo=null;
+
+boolean tieneTexto=false,tieneAlineacion=false,tieneColor=false,tieneOrigen=false,tieneAltura=false,tieneAncho=false,tienePadre=false,tieneEtiquetas=false;
+
+String texto=null, alineacion=null,color=null,origen=null,altura=null,ancho=null,padre=null;
+for(int i=0;i<parametros.size();i++){
+	if(parametros.get(i).getNombre().equals("ID")){
+		if(tieneId==false){
+			tieneId=true;
+			id = parametros.get(i).getLexema();
+		}else{
+			error=true;
+		}
+	}else if(parametros.get(i).getNombre().equals("PAGINA")){
+		if(tienePagina==false){
+			tienePagina=true;
+			pagina = parametros.get(i).getLexema();
+		}else{
+			error=true;
+		}
+	}else if(parametros.get(i).getNombre().equals("CLASE")){
+		if(tieneClase==false){
+			tieneClase=true;
+			clase = parametros.get(i).getLexema();
+		}else{
+			error=true;
+		}
+	}
+}
+
+if(tieneId==true && tienePagina==true && tieneClase==true){
+	
+	if(error==false){
+		
+	
+	if(clase.equals("TITULO")){
+		for(int i=0;i<atributos.size();i++){
+			if(atributos.get(i).getNombre().equals("TEXTO")){
+				if(tieneTexto==false){
+					tieneTexto=true;
+					texto = atributos.get(i).getLexema();
+				}else{
+					error=true;
+				}
+			}else if(atributos.get(i).getNombre().equals("ALINEACION")){
+				if(tieneAlineacion==false){
+					tieneAlineacion=true;
+					alineacion = atributos.get(i).getLexema();
+				}else{
+					error=true;
+				}
+			}
+		}
+		
+		if(tieneTexto==true){
+			if(error==false){
+				compTitulo = new ComponenteTitulo(texto,alineacion);
+			}else{
+				System.out.println("HAY CAMPOS REPETIDOS");
+			}
+		}else{
+			System.out.println("FALTAN ATRIBUTOS OBLIGATORIOS PARA TITULO");
+		}
+		
+	
+	}else if(clase.equals("PARRAFO")){
+		for(int i=0;i<atributos.size();i++){
+			if(atributos.get(i).getNombre().equals("TEXTO")){
+				if(tieneTexto==false){
+					tieneTexto=true;
+					texto = atributos.get(i).getLexema();
+				}else{
+					error=true;
+				}
+			}else if(atributos.get(i).getNombre().equals("ALINEACION")){
+				if(tieneAlineacion==false){
+					tieneAlineacion=true;
+					alineacion = atributos.get(i).getLexema();
+				}else{
+					error=true;
+				}
+			}else if(atributos.get(i).getNombre().equals("COLOR")){
+				if(tieneColor==false){
+					tieneColor=true;
+					color = atributos.get(i).getLexema();
+				}else{
+					error=true;
+				}
+			}
+		}
+		
+		if(tieneTexto==true){
+			if(error==false){
+				compParrafo = new ComponenteParrafo(texto,alineacion,color);
+			}else{
+				System.out.println("HAY CAMPOS REPETIDOS");
+			}
+		}else{
+			System.out.println("FALTAN ATRIBUTOS OBLIGATORIOS PARA PARRAFO");
+		}
+	
+	
+	}else if(clase.equals("IMAGEN")){
+		for(int i=0;i<atributos.size();i++){
+			if(atributos.get(i).getNombre().equals("ORIGEN")){
+				if(tieneOrigen==false){
+					tieneOrigen=true;
+					origen = atributos.get(i).getLexema();
+				}else{
+					error=true;
+				}
+			}else if(atributos.get(i).getNombre().equals("ALINEACION")){
+				if(tieneAlineacion==false){
+					tieneAlineacion=true;
+					alineacion = atributos.get(i).getLexema();
+				}else{
+					error=true;
+				}
+			}else if(atributos.get(i).getNombre().equals("ALTURA")){
+				if(tieneAltura==false){
+					tieneAltura=true;
+					altura = atributos.get(i).getLexema();
+				}else{
+					error=true;
+				}
+			}else if(atributos.get(i).getNombre().equals("ANCHO")){
+				if(tieneAncho==false){
+					tieneAncho=true;
+					ancho = atributos.get(i).getLexema();
+				}else{
+					error=true;
+				}
+			}
+		}
+		
+		if(tieneOrigen==true && tieneAncho==true && tieneAltura==true){
+			if(error==false){
+				compImagen = new ComponenteImagen(origen,alineacion,Integer.parseInt(altura),Integer.parseInt(ancho));
+			}else{
+				System.out.println("HAY CAMPOS REPETIDOS");
+			}
+		}else{
+			System.out.println("FALTAN ATRIBUTOS OBLIGATORIOS PARA IMAGEN");
+		}
+	
+	
+	}else if(clase.equals("VIDEO")){
+		for(int i=0;i<atributos.size();i++){
+			if(atributos.get(i).getNombre().equals("ORIGEN")){
+				if(tieneOrigen==false){
+					tieneOrigen=true;
+					origen = atributos.get(i).getLexema();
+				}else{
+					error=true;
+				}
+			}else if(atributos.get(i).getNombre().equals("ALTURA")){
+				if(tieneAltura==false){
+					tieneAltura=true;
+					altura = atributos.get(i).getLexema();
+				}else{
+					error=true;
+				}
+			}else if(atributos.get(i).getNombre().equals("ANCHO")){
+				if(tieneAncho==false){
+					tieneAncho=true;
+					ancho = atributos.get(i).getLexema();
+				}else{
+					error=true;
+				}
+			}
+		}
+		
+		if(tieneOrigen==true && tieneAncho==true && tieneAltura==true){
+			if(error==false){
+				compVideo = new ComponenteVideo(origen,Integer.parseInt(altura),Integer.parseInt(ancho));
+			}else{
+				System.out.println("HAY CAMPOS REPETIDOS");
+			}
+		}else{
+			System.out.println("FALTAN ATRIBUTOS OBLIGATORIOS PARA VIDEO");
+		}
+
+	}else if(clase.equals("MENU")){
+		for(int i=0;i<atributos.size();i++){
+			if(atributos.get(i).getNombre().equals("PADRE")){
+				if(tienePadre==false){
+					tienePadre=true;
+					padre = atributos.get(i).getLexema();
+				}else{
+					error=true;
+				}
+			}else if(atributos.get(i).getNombre().equals("ETIQUETAS")){
+				if(tieneEtiquetas==false){
+					tieneEtiquetas=true;
+				}else{
+					error=true;
+				}
+			}
+		}
+		
+		if(tienePadre==true || tieneEtiquetas==true){
+			if(error==false){
+				compMenu = new ComponenteMenu(padre,etiquetas);
+			}else{
+				System.out.println("HAY CAMPOS REPETIDOS");
+			}
+		}else{
+			System.out.println("FALTAN ATRIBUTOS OBLIGATORIOS PARA MENU");
+		}
+	}
+
+		
+	}else{
+		System.out.println("HAY CAMPOS REPETIDOS");
+	}
+	
+	if (error == false) {
+                            if (compTitulo == null && compParrafo == null && compImagen == null && compVideo == null && compMenu == null) {
+                                System.out.println("NO HAY NINGUN COMPONENTE QUE UTILIZAR");
+                            } else {
+
+                                ModificarComponente componente = new ModificarComponente(id, pagina, clase, compTitulo, compParrafo, compImagen, compVideo, compMenu);
+                                acciones.accionModificarComponente(componente);
+                            }
+
+                        } else {
+                            System.out.println("HAY ERRORES PARA MODIFICAR COMPONENTE");
+                        }
+	
+	
+}else{
+	System.out.println("FALTAN PARAMETROS OBLIGATORIOS");
+	error=true;
+}
+	
+	etiquetas= new ArrayList<>();
+	parametros= new ArrayList<>();
+	atributos= new ArrayList<>();
+
+
+
 
               CUP$parser$result = parser.getSymbolFactory().newSymbol("estructura_modificar_componente",46, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }

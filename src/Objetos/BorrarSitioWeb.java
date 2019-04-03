@@ -5,6 +5,7 @@ package Objetos;
  *
  * @author jcsr
  */
+
 public class BorrarSitioWeb {
     
     private String id;
