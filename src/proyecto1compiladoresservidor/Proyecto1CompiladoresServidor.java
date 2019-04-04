@@ -60,7 +60,6 @@ public class Proyecto1CompiladoresServidor implements Runnable {
                 parser.parse();
                 cliente.close();
 
-                mensaje.mandarMensaje("MENSAJE RECIBIDO DEL SERVIDOR CORRECTAMENTE");
             }
 
         } catch (IOException ex) {

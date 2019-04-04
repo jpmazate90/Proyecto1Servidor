@@ -112,6 +112,8 @@ public class HTML {
     private static String BR = "<br>";
     private static String INICIO_TITLE = "<title>";
     private static String FIN_TITLE = "</title>";
+    
+    public Mensajes msg = new Mensajes();
 
     public void crearIndexSitio(NuevoSitioWeb nuevoSitioWeb, String pathSitio, String pathIndex) {
 
@@ -143,6 +145,27 @@ public class HTML {
                 escritor.write(FIN_TITLE);
                 escritor.write(FIN_HTML);
             }
+            escritor.flush();
+            escritor.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+    
+    public void crearTitulo(String path,String titulo){
+        try {
+            File archivoPagina = new File(path);
+            archivoPagina.createNewFile();
+            FileWriter writer;
+            writer = new FileWriter(archivoPagina);
+            BufferedWriter escritor = new BufferedWriter(writer);
+            
+                escritor.write(INICIO_HTML);
+                escritor.write(INICIO_TITLE);
+                escritor.write(titulo);
+                escritor.write(FIN_TITLE);
+                escritor.write(FIN_HTML);
+            
             escritor.flush();
             escritor.close();
         } catch (Exception ex) {
@@ -396,6 +419,7 @@ public class HTML {
             }
             ficheros[x].delete();
         }
+        
     }
 
     public void guardarBaseDatos(ArrayList<Sitio> sitios, ArrayList<Pagina> paginas, ArrayList<Componente> componentes) {

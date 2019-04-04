@@ -15,6 +15,7 @@ import Objetos.ComponenteMenu;
 import Objetos.ComponenteParrafo;
 import Objetos.ComponenteTitulo;
 import Objetos.ComponenteVideo;
+import Objetos.Mandar;
 import Objetos.ModificarComponente;
 import Objetos.ModificarPagina;
 import Objetos.NuevaPagina;
@@ -24,8 +25,11 @@ import Objetos.Sitio;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import sun.font.CreatedFontTracker;
 
 /**
@@ -40,6 +44,7 @@ public class Acciones {
     private final String direccionApache = "/var/www/html";
     private HTML html;
     private SimpleDateFormat formato;
+    private Mensajes msg = new Mensajes();
 
     public Acciones() {
         html = new HTML();
@@ -61,9 +66,11 @@ public class Acciones {
             sitios.add(sitio);
             paginas.add(pagina);
             guardarBaseDatos();
+            msg.mandarMensaje("SE CREO CORRECTAMENTE EL NUEVO SITIO WEB CON ID:"+nuevoSitioWeb.getId());
         } else {
             //mandar a la aplicacion cliente en XML
-            System.out.println("Ya existe el id");
+            msg.mandarError("ERROR SEMANTICO: NUEVO SITIO WEB,YA EXISTE EL ID PARA EL SITIO:"+nuevoSitioWeb.getId());
+            
         }
     }
 
@@ -110,6 +117,44 @@ public class Acciones {
 
     public void accionBorrarSitioWeb(BorrarSitioWeb borrarSitioWeb) {
         System.out.println("Accion borrarSitioWeb, id:" + borrarSitioWeb.getId());
+        ArrayList<Sitio> sits = Acciones.sitios;
+        ArrayList<Pagina> pags = Acciones.paginas;
+        String idSitio = borrarSitioWeb.getId();
+        BorrarPagina borrarPagina;
+
+        boolean existeSitio = existeIdSitio(idSitio);
+        if (existeSitio == true) {
+            for (int i = 0; i < sits.size(); i++) {
+                if (sits.get(i).getId().equals(borrarSitioWeb.getId())) {
+                    idSitio = sits.get(i).getId();
+                    sits.remove(i);
+                    i--;
+                    break;
+                }
+            }
+
+            for (int i = 0; i < pags.size(); i++) {
+                if (pags.get(i).getSitio().equals(idSitio)) {
+                    borrarPagina = new BorrarPagina(pags.get(i).getId());
+                    accionBorrarPagina(borrarPagina, true);
+                    i--;
+                }
+
+            }
+            String pathSitio = direccionApache + "/" + idSitio;
+            File directorio = new File(pathSitio);
+            if (directorio.isDirectory()) {
+                html.borrarSitio(directorio);
+                directorio.delete();
+            } else {
+                System.out.println("no es un directorio");
+            }
+            msg.mandarMensaje("SE BORRO CORRECTAMENTE EL SITIO WEB CON ID:"+borrarSitioWeb.getId());
+
+        } else {
+            msg.mandarError("ERROR SEMANTICO: BORRAR SITIO WEB, NO EXISTE EL ID PARA EL SITIO:"+borrarSitioWeb.getId());
+        }
+
     }
 
     public void accionNuevaPagina(NuevaPagina nuevaPagina) {
@@ -121,6 +166,13 @@ public class Acciones {
             if (existeSitio == true) {
                 if (nuevaPagina.getPadre() != null) {
                     padre = existeIdPagina(nuevaPagina.getPadre());
+                    if (padre == true) {
+                        Pagina pagPadre = paginaPorId(nuevaPagina.getPadre());
+                        if (!pagPadre.getSitio().equals(nuevaPagina.getSitio())) {
+                            padre = false;
+                            msg.mandarError("ERROR SEMANTICO: NUEVA PAGINA, NO ESTAN EN EL MISMO SITIO WEB LA PAGINA:"+nuevaPagina.getId()+", SU SITIO ES:"+nuevaPagina.getSitio()+", Y EL PADRE: "+nuevaPagina.getPadre()+", SU SITIO ES:"+pagPadre.getSitio()+". POR LO CUAL NO SE PUEDE CREAR LA PAGINA");
+                        }
+                    }
                 }
                 if (padre == true) {
                     Pagina paginaNueva;
@@ -129,20 +181,22 @@ public class Acciones {
                     paginaNueva = new Pagina(nuevaPagina.getId(), nuevaPagina.getLink(), nuevaPagina.getSitio(), nuevaPagina.getPadre(), nuevaPagina.getUsuarioCreacion(), formato.format(nuevaPagina.getFechaCreacion()), formato.format(nuevaPagina.getFechaModificacion()), nuevaPagina.getUsuarioModificacion(), nuevaPagina.getEtiquetas(), nuevaPagina.getTitulo());
                     paginas.add(paginaNueva);
                     guardarBaseDatos();
+                    msg.mandarMensaje("SE CREO CORRECTAMENTE LA NUEVA PAGINA CON ID:"+nuevaPagina.getId());
                 } else {
-                    System.out.println("No existe una pagina con id:" + nuevaPagina.getPadre() + " para ser padre");
+                    msg.mandarError("ERROR SEMANTICO: NUEVA PAGINA, NO EXISTE UNA PAGINA CON ID:" + nuevaPagina.getPadre() + " PARA SER PADRE DENTRO DEL MISMO SITIO");
                 }
 
             } else {
-                System.out.println("NO existe ningun sitio con el id:" + nuevaPagina.getPadre());
+                msg.mandarError("ERROR SEMANTICO: NUEVA PAGINA, NO EXISTE NINGUN SITIO CON EL ID:" + nuevaPagina.getSitio());
             }
         } else {
-            System.out.println("Ya existe la pagina con id:" + nuevaPagina.getId());
+            msg.mandarError("ERROR SEMANTICO: NUEVA PAGINA,YA EXISTE LA PAGINA CON ID:" + nuevaPagina.getId());
         }
 
     }
 
-    public void accionBorrarPagina(BorrarPagina borrarPagina) {
+    public void accionBorrarPagina(BorrarPagina borrarPagina, boolean borrarIndex) {
+
         System.out.println("Accion borrarPagina, id:" + borrarPagina.getId());
         ArrayList<Pagina> pags = Acciones.paginas;
         ArrayList<Componente> comps = Acciones.componentes;
@@ -150,8 +204,8 @@ public class Acciones {
         boolean existePag = existeIdPagina(borrarPagina.getId());
         if (existePag == true) {
             Pagina pagina = paginaPorId(borrarPagina.getId());
-            if (borrarPagina.getId().startsWith("_index") && borrarPagina.getId().endsWith(pagina.getSitio())) {
-                System.out.println("NO SE PUEDE BORRAR EL INDEX");
+            if (borrarPagina.getId().startsWith("_index") && borrarPagina.getId().endsWith(pagina.getSitio()) && borrarIndex == false) {
+                msg.mandarError("ERROR SEMANTICO: BORRAR PAGINA ,NO SE PUEDE BORRAR EL INDEX DEL SITIO:"+pagina.getSitio());
             } else {
                 for (int i = 0; i < pags.size(); i++) {
                     if (pags.get(i).getId().equals(borrarPagina.getId())) {
@@ -170,7 +224,7 @@ public class Acciones {
 
                 for (int i = 0; i < pags.size(); i++) {
                     if (pags.get(i).getPadre() != null && pags.get(i).getPadre().equals(id)) {
-                        for (int j = 0;j < comps.size(); j++) {
+                        for (int j = 0; j < comps.size(); j++) {
                             if (comps.get(j).getPagina().equals(pags.get(i).getId())) {
                                 comps.remove(j);
                                 j--;
@@ -181,20 +235,48 @@ public class Acciones {
                         i--;
                         html.borrarPagina(path1);
                     }
-                    
 
                 }
                 String path = direccionApache + "/" + pagina.getSitio() + "/" + id + ".html";
                 html.borrarPagina(path);
                 guardarBaseDatos();
+                msg.mandarMensaje("SE BORRO CORRECTAMENTE LA PAGINA CON ID:"+borrarPagina.getId());
             }
         } else {
-            System.out.println("NO EXISTE PAGINA CON ID:" + borrarPagina.getId());
+            msg.mandarError("ERROR SEMANTICO: BORRAR PAGINA , NO EXISTE PAGINA CON ID:" + borrarPagina.getId()+" PARA BORRAR");
         }
     }
 
     public void accionModificarPagina(ModificarPagina modificarPagina) {
         System.out.println("Accion modificarPagina, id:" + modificarPagina.getId());
+
+        String idPag = modificarPagina.getId();
+        boolean existePag = existeIdPagina(idPag);
+        if (existePag == true) {
+            Pagina pagina = paginaPorId(idPag);
+            pagina.setFechaModificacion(formato.format(modificarPagina.getDatefechaModificacion()));
+            pagina.setUsuarioModificacion(modificarPagina.getUsuarioModificacion());
+            if (modificarPagina.getTitulo() != null) {
+                String id = pagina.getId();
+                if (pagina.getId().startsWith("_index")) {
+                    id = "index";
+                }
+                String link = direccionApache + "/" + pagina.getSitio() + "/" + id + ".html";
+                limpiarPagina(link);
+                html.crearTitulo(link, modificarPagina.getTitulo());
+                ingresarComponentes(idPag, link);
+
+            }
+            if (modificarPagina.getEtiquetas() != null && modificarPagina.getEtiquetas().size() > 0) {
+                pagina.setEtiquetas(modificarPagina.getEtiquetas());
+
+            }
+            guardarBaseDatos();
+            msg.mandarMensaje("SE MODIFICO CORRECTAMENTE LA PAGINA CON ID:"+modificarPagina.getId());
+
+        } else {
+            msg.mandarError("ERROR SEMANTICO: MODIFICAR PAGINA, NO EXISTE LA PAGINA A MODIFICAR CON ID:" + idPag);
+        }
     }
 
     public void accionAgregarComponente(AgregarComponente agregarComponente) {
@@ -215,16 +297,17 @@ public class Acciones {
                     if (componente != null) {
                         componentes.add(componente);
                         guardarBaseDatos();
+                        msg.mandarMensaje("SE CREO CORRECTAMENTE EL COMPONENTE CON ID:"+agregarComponente.getId());
                     } else {
                         System.out.println("El objeto es null");
                     }
                 }
             } else {
-                System.out.println("No existe la pagina con id:" + agregarComponente.getPagina());
+                msg.mandarError("ERROR SEMANTICO: AGREGAR COMPONENTE,NO EXISTE LA PAGINA CON ID:" + agregarComponente.getPagina());
             }
 
         } else {
-            System.out.println("Ya existe un componente con el id:" + agregarComponente.getId());
+            msg.mandarError("ERROR SEMANTICO: AGREGAR COMPONENTE,YA EXISTE UN COMPONENTE CON EL ID:" + agregarComponente.getId());
         }
     }
 
@@ -257,6 +340,11 @@ public class Acciones {
                         }
                         String direccion = direccionApache + "/" + pagina.getSitio() + "/" + id + ".html";
                         limpiarPagina(direccion);
+
+                        if (pagina.getTitulo() != null && !pagina.getTitulo().equals("null")) {
+                            html.crearTitulo(direccion, pagina.getTitulo());
+                        }
+
                         for (int i = 0; i < componentes.size(); i++) {
                             if (componentes.get(i).getPagina().equals(idPagina)) {
                                 String clase = componentes.get(i).getClase();
@@ -313,21 +401,203 @@ public class Acciones {
 
                         }
                         guardarBaseDatos();
+                        msg.mandarMensaje("SE BORRO CORRECTAMENTE EL COMPONENTE CON ID:"+borrarComponente.getId());
                     }
 
                 } else {
-                    System.out.println("No existe la pagina con id:" + borrarComponente.getPagina());
+                    msg.mandarError("ERROR SEMANTICO: BORRAR COMPONENTE,NO EXISTE LA PAGINA CON ID:" + borrarComponente.getPagina());
                 }
             } else {
-                System.out.println("No existe el componente con el id:" + borrarComponente.getId());
+                msg.mandarError("ERROR SEMANTICO: BORRAR COMPONENTE,NO EXISTE EL COMPONENTE CON EL ID:" + borrarComponente.getId());
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void accionModificarComponente(ModificarComponente modificarComponente) {
-        System.out.println("Accion modificarComponente, id:" + modificarComponente.getId());
+    public void accionModificarComponente(ModificarComponente modificarComponente,String usuario) {
+        try {
+            System.out.println("Accion modificarComponente, id:" + modificarComponente.getId());
+            ComponenteImagen img = null;
+            ComponenteMenu menu = null;
+            ComponenteParrafo parrafo = null;
+            ComponenteTitulo titulo = null;
+            ComponenteVideo video = null;
+            ArrayList<Componente> cmps = Acciones.componentes;
+            ArrayList<Pagina> pags = Acciones.paginas;
+            boolean existeComponente = existeIdComponente(modificarComponente.getId());
+            if (existeComponente == true) {
+                boolean existePagina = existeIdPagina(modificarComponente.getPagina());
+                if (existePagina == true) {
+                    Pagina paginaId = paginaPorId(modificarComponente.getPagina());
+                    
+                    if (paginaId != null) {
+                        String id = paginaId.getId();
+                        if (paginaId.getId().startsWith("_index")) {
+                            id = "index";
+                        }
+                        String direccion = direccionApache + "/" + paginaId.getSitio() + "/" + id + ".html";
+                        limpiarPagina(direccion);
+                        Componente componenteNuevo = objetoModificarComponente(modificarComponente);
+                        for (int i = 0; i < cmps.size(); i++) {
+                            if (cmps.get(i).getId().equals(modificarComponente.getId())) {
+                                cmps.add(i, componenteNuevo);
+                                cmps.remove(i + 1);
+                                break;
+                            }
+                        }
+                        String idPagina = paginaId.getId();
+
+                        if (paginaId.getTitulo() != null && !paginaId.getTitulo().equals("null")) {
+                            html.crearTitulo(direccion, paginaId.getTitulo());
+                        }
+                        for (int i = 0; i < pags.size(); i++) {
+                            if(pags.get(i).getId().equals(paginaId.getId())){
+                                Date fechaActual = new Date();
+                                pags.get(i).setFechaModificacion(formato.format(fechaActual));
+                                pags.get(i).setUsuarioModificacion(usuario);
+                                break;
+                            }
+                        }
+
+                        for (int i = 0; i < componentes.size(); i++) {
+                            if (componentes.get(i).getPagina().equals(idPagina)) {
+                                String clase = componentes.get(i).getClase();
+                                if (clase.equals("TITULO")) {
+                                    String alineacion = null;
+                                    if (componentes.get(i).getAlineacion() != null && !componentes.get(i).getAlineacion().equals("null")) {
+                                        alineacion = componentes.get(i).getAlineacion();
+                                    }
+                                    titulo = new ComponenteTitulo(componentes.get(i).getTexto(), alineacion);
+
+                                } else if (clase.equals("PARRAFO")) {
+                                    String alineacion = null, color = null;
+                                    if (componentes.get(i).getAlineacion() != null && !componentes.get(i).getAlineacion().equals("null")) {
+                                        alineacion = componentes.get(i).getAlineacion();
+                                    }
+                                    if (componentes.get(i).getColor() != null && !componentes.get(i).getColor().equals("null")) {
+                                        color = componentes.get(i).getColor();
+                                    }
+                                    parrafo = new ComponenteParrafo(componentes.get(i).getTexto(), alineacion, color);
+
+                                } else if (clase.equals("VIDEO")) {
+                                    video = new ComponenteVideo(componentes.get(i).getOrigen(), Integer.parseInt(componentes.get(i).getAltura()), Integer.parseInt(componentes.get(i).getAncho()));
+
+                                } else if (clase.equals("IMAGEN")) {
+                                    String alineacion = null;
+                                    if (componentes.get(i).getAlineacion() != null && !componentes.get(i).getAlineacion().equals("null")) {
+                                        alineacion = componentes.get(i).getAlineacion();
+                                    }
+                                    img = new ComponenteImagen(componentes.get(i).getOrigen(), alineacion, Integer.parseInt(componentes.get(i).getAltura()), Integer.parseInt(componentes.get(i).getAncho()));
+
+                                } else if (clase.equals("MENU")) {
+                                    ArrayList<String> etiquetas = componentes.get(i).getEtiquetas();
+                                    String padre = null;
+                                    if (etiquetas.size() == 1) {
+                                        if (etiquetas.get(0).equals("null")) {
+                                            etiquetas = new ArrayList<>();
+                                        }
+                                    }
+                                    if (componentes.get(i).getPadre() != null && !componentes.get(i).getPadre().equals("null")) {
+                                        padre = componentes.get(i).getPadre();
+                                    }
+                                    menu = new ComponenteMenu(padre, etiquetas);
+                                }
+                                AgregarComponente cmp = new AgregarComponente(componentes.get(i).getId(), componentes.get(i).getPagina(), componentes.get(i).getClase(), titulo, parrafo, img, video, menu);
+
+                                html.crearComponente(cmp, direccion);
+                                menu = null;
+                                titulo = null;
+                                parrafo = null;
+                                img = null;
+                                video = null;
+                            }
+
+                        }
+                        guardarBaseDatos();
+                        msg.mandarMensaje("SE MODIFICO CORRECTAMENTE EL COMPONENTE CON ID:"+modificarComponente.getId());
+                        
+
+                    } else {
+                        msg.mandarError("ERROR SEMANTICO: MODIFICAR COMPONENTE,NO EXISTE LA PAGINA CON ID:" + modificarComponente.getPagina());
+                    }
+
+                } else {
+                    msg.mandarError("ERROR SEMANTICO: MODIFICAR COMPONENTE,NO EXISTE UN COMPONENTE CON EL ID:" + modificarComponente.getId());
+                }
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void ingresarComponentes(String idPagina, String direccion) {
+        try {
+            ComponenteImagen img = null;
+            ComponenteMenu menu = null;
+            ComponenteParrafo parrafo = null;
+            ComponenteTitulo titulo = null;
+            ComponenteVideo video = null;
+            for (int i = 0; i < componentes.size(); i++) {
+                if (componentes.get(i).getPagina().equals(idPagina)) {
+                    String clase = componentes.get(i).getClase();
+                    if (clase.equals("TITULO")) {
+                        String alineacion = null;
+                        if (componentes.get(i).getAlineacion() != null && !componentes.get(i).getAlineacion().equals("null")) {
+                            alineacion = componentes.get(i).getAlineacion();
+                        }
+                        titulo = new ComponenteTitulo(componentes.get(i).getTexto(), alineacion);
+
+                    } else if (clase.equals("PARRAFO")) {
+                        String alineacion = null, color = null;
+                        if (componentes.get(i).getAlineacion() != null && !componentes.get(i).getAlineacion().equals("null")) {
+                            alineacion = componentes.get(i).getAlineacion();
+                        }
+                        if (componentes.get(i).getColor() != null && !componentes.get(i).getColor().equals("null")) {
+                            color = componentes.get(i).getColor();
+                        }
+                        parrafo = new ComponenteParrafo(componentes.get(i).getTexto(), alineacion, color);
+
+                    } else if (clase.equals("VIDEO")) {
+                        video = new ComponenteVideo(componentes.get(i).getOrigen(), Integer.parseInt(componentes.get(i).getAltura()), Integer.parseInt(componentes.get(i).getAncho()));
+
+                    } else if (clase.equals("IMAGEN")) {
+                        String alineacion = null;
+                        if (componentes.get(i).getAlineacion() != null && !componentes.get(i).getAlineacion().equals("null")) {
+                            alineacion = componentes.get(i).getAlineacion();
+                        }
+                        img = new ComponenteImagen(componentes.get(i).getOrigen(), alineacion, Integer.parseInt(componentes.get(i).getAltura()), Integer.parseInt(componentes.get(i).getAncho()));
+
+                    } else if (clase.equals("MENU")) {
+                        ArrayList<String> etiquetas = componentes.get(i).getEtiquetas();
+                        String padre = null;
+                        if (etiquetas.size() == 1) {
+                            if (etiquetas.get(0).equals("null")) {
+                                etiquetas = new ArrayList<>();
+                            }
+                        }
+                        if (componentes.get(i).getPadre() != null && !componentes.get(i).getPadre().equals("null")) {
+                            padre = componentes.get(i).getPadre();
+                        }
+                        menu = new ComponenteMenu(padre, etiquetas);
+                    }
+                    AgregarComponente cmp = new AgregarComponente(componentes.get(i).getId(), componentes.get(i).getPagina(), componentes.get(i).getClase(), titulo, parrafo, img, video, menu);
+
+                    html.crearComponente(cmp, direccion);
+                    menu = null;
+                    titulo = null;
+                    parrafo = null;
+                    img = null;
+                    video = null;
+
+                }
+
+            }
+            guardarBaseDatos();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void limpiarPagina(String path) {
@@ -391,6 +661,13 @@ public class Acciones {
         return paginasMandar;
     }
 
+    public Componente objetoModificarComponente(ModificarComponente comp) {
+
+        AgregarComponente componente = new AgregarComponente(comp.getId(), comp.getPagina(), comp.getClase(), comp.getCompTitulo(), comp.getCompParrafo(), comp.getCompImagen(), comp.getCompVideo(), comp.getCompMenu());
+        return objetoComponente(componente);
+
+    }
+
     public Componente objetoComponente(AgregarComponente comp) {
         String id = null, pagina = null, clase = null, texto = null, alineacion = null, color = null, origen = null, altura = null, ancho = null, padre = null;
         ArrayList<String> etiquetas = new ArrayList<>();
@@ -417,7 +694,8 @@ public class Acciones {
         }
         return null;
     }
-
+    
+   
     public static ArrayList<Sitio> getSitios() {
         return sitios;
     }

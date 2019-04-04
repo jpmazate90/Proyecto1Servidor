@@ -54,6 +54,30 @@ public class ModificarPagina {
     public void setEtiquetas(ArrayList<String> etiquetas) {
         this.etiquetas = etiquetas;
     }
+
+    public String getUsuarioModificacion() {
+        return usuarioModificacion;
+    }
+
+    public void setUsuarioModificacion(String usuarioModificacion) {
+        this.usuarioModificacion = usuarioModificacion;
+    }
+
+    public Date getDatefechaModificacion() {
+        return datefechaModificacion;
+    }
+
+    public void setDatefechaModificacion(Date datefechaModificacion) {
+        this.datefechaModificacion = datefechaModificacion;
+    }
+
+    public boolean isTieneTitulo() {
+        return tieneTitulo;
+    }
+
+    public void setTieneTitulo(boolean tieneTitulo) {
+        this.tieneTitulo = tieneTitulo;
+    }
     
     
     

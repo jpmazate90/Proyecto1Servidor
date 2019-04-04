@@ -1996,7 +1996,7 @@ if(tieneId==true && tieneSitio==true){
 
 
 BorrarPagina pagina = new BorrarPagina(e53);
-acciones.accionBorrarPagina(pagina);
+acciones.accionBorrarPagina(pagina,false);
 
 
               CUP$parser$result = parser.getSymbolFactory().newSymbol("estructura_borrar_pagina",15, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
@@ -3346,7 +3346,7 @@ if(tieneId==true && tienePagina==true && tieneClase==true){
                             } else {
 
                                 ModificarComponente componente = new ModificarComponente(id, pagina, clase, compTitulo, compParrafo, compImagen, compVideo, compMenu);
-                                acciones.accionModificarComponente(componente);
+                                acciones.accionModificarComponente(componente,usuarioModificacionGlobal);
                             }
 
                         } else {
