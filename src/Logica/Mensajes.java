@@ -10,7 +10,7 @@ import java.net.Socket;
  * @author jcsr
  */
 public class Mensajes {
-
+// sirve para mandar un mensaje de exito a la aplicacion cliente
     public void mandarMensaje(String texto) {
         try {
             String mensajeEnviar = "<MENSAJE>["+texto+"]</MENSAJE>";
@@ -23,7 +23,7 @@ public class Mensajes {
             e.printStackTrace();
         }
     }
-
+// sirve para mandar un mensaje de error a la aplicacion cliente
     public void mandarError(String mensaje) {
         try {
             String mensajeEnviar = "<ERROR>["+mensaje+"]</ERROR>";

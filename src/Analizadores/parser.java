@@ -17,6 +17,7 @@ import Objetos.ModificarPagina;
 import Objetos.BorrarPagina;
 import Apoyo.Parametro;
 import Logica.Acciones;
+import Logica.Mensajes;
 import Objetos.NuevaPagina;
 import Objetos.NuevoSitioWeb;
 import Objetos.BorrarSitioWeb;
@@ -826,14 +827,16 @@ public class parser extends java_cup.runtime.lr_parser {
 
 	
 	// Connect this parser to a scanner!
-
+        Mensajes msg;
 	public parser(AnalizadorLexico1 lex,String usuario) {
 		super(lex);
                 this.usuarioCreacionGlobal = usuario;
                 this.usuarioModificacionGlobal = usuario;
+                msg = new Mensajes();
 	}
 
         public void syntax_error(Symbol cur_token) {
+            msg.mandarError("ERROR: "+cur_token);
             System.out.println("Error "+cur_token);
         }
 
@@ -1193,10 +1196,12 @@ if(tieneId==true){
 	acciones.accionNuevoSitioWeb(nuevo,usuarioModificacionGlobal);
 	parametros= new ArrayList<>();
 	}else{
+                msg.mandarError("ERROR: HAY CAMPOS REPETIDOS");
 		System.out.println("HAY CAMPOS REPETIDOS");
 	}
 }else{
 	error=true;
+        msg.mandarError("ERROR: FALTAN PARAMETROS OBLIGATORIOS, ID");
 	System.out.println("FALTAN PARAMETROS OBLIGATORIOS");
 }
 
@@ -1725,10 +1730,12 @@ if(tieneId==true && tieneSitio==true){
 	NuevaPagina pagina = new 		NuevaPagina(id,id,titulo,sitio,padre,usuarioCreacion,fechaCreacion,fechaModificacion,usuarioModificacion,etiquetas);
 	acciones.accionNuevaPagina(pagina);
 	}else{
+                msg.mandarError("ERROR: HAY CAMPOS REPETIDOS");
 		System.out.println("HAY CAMPOS REPETIDOS");
 	}
 	
 }else{
+        msg.mandarError("ERROR: FALTAN PARAMETROS OBLIGATORIOS, ID O SITIO");
 	System.out.println("FALTAN PARAMETROS OBLIGATORIOS");
 	error=true;
 }
@@ -2059,6 +2066,7 @@ if(tieneId==true){
 	if(error==false){
 
 	if(tieneTitulo==false && etiquetas.size()==0){
+                msg.mandarError("ERROR: NO HAY NI TITULO NI ETIQUETAS QUE CAMBIAR");
 		System.out.println("NO HAY NI TITULO NI ETIQUETAS QUE CAMBIAR");
 	}else{
 		ModificarPagina pagina = new ModificarPagina(id,titulo,usuarioModificacion,fechaModificacion,etiquetas);
@@ -2067,10 +2075,12 @@ if(tieneId==true){
 	}
 
 	}else{
+                msg.mandarError("ERROR: HAY CAMPOS REPETIDOS");
 		System.out.println("HAY CAMPOS REPETIDOS");
 	}
 	
 }else{
+        msg.mandarError("ERROR: FALTAN PARAMETROS OBLIGATORIOS");
 	System.out.println("FALTAN PARAMETROS OBLIGATORIOS");
 	error=true;
 }
@@ -2225,9 +2235,11 @@ if(tieneId==true && tienePagina==true && tieneClase==true){
 			if(error==false){
 				compTitulo = new ComponenteTitulo(texto,alineacion);
 			}else{
+                            msg.mandarError("ERROR: HAY CAMPOS REPETIDOS PARA TITULO");
 				System.out.println("HAY CAMPOS REPETIDOS");
 			}
 		}else{
+                    msg.mandarError("ERROR: FALTAN ATRIBUTOS OBLIGATORIOS PARA TITULO, TEXTO");
 			System.out.println("FALTAN ATRIBUTOS OBLIGATORIOS PARA TITULO");
 		}
 		
@@ -2262,9 +2274,11 @@ if(tieneId==true && tienePagina==true && tieneClase==true){
 			if(error==false){
 				compParrafo = new ComponenteParrafo(texto,alineacion,color);
 			}else{
+                            msg.mandarError("ERROR: HAY CAMPOS REPETIDOS PARA PARRAFO");
 				System.out.println("HAY CAMPOS REPETIDOS");
 			}
 		}else{
+                    msg.mandarError("ERROR: FALTAN ATRIBUTOS OBLIGATORIOS PARA PARRAFO, TEXTO");
 			System.out.println("FALTAN ATRIBUTOS OBLIGATORIOS PARA PARRAFO");
 		}
 	
@@ -2306,9 +2320,11 @@ if(tieneId==true && tienePagina==true && tieneClase==true){
 			if(error==false){
 				compImagen = new ComponenteImagen(origen,alineacion,Integer.parseInt(altura),Integer.parseInt(ancho));
 			}else{
+                            msg.mandarError("ERROR: HAY CAMPOS REPETIDOS PARA IMAGEN");
 				System.out.println("HAY CAMPOS REPETIDOS");
 			}
 		}else{
+                    msg.mandarError("ERROR: FALTAN ATRIBUTOS OBLIGATORIOS PARA IMAGEN, ORIGEN O ANCHO O ALTURA");
 			System.out.println("FALTAN ATRIBUTOS OBLIGATORIOS PARA IMAGEN");
 		}
 	
@@ -2343,9 +2359,11 @@ if(tieneId==true && tienePagina==true && tieneClase==true){
 			if(error==false){
 				compVideo = new ComponenteVideo(origen,Integer.parseInt(altura),Integer.parseInt(ancho));
 			}else{
+                            msg.mandarError("ERROR: HAY CAMPOS REPETIDOS PARA VIDEO");
 				System.out.println("HAY CAMPOS REPETIDOS");
 			}
 		}else{
+                    msg.mandarError("ERROR: FALTAN ATRIBUTOS OBLIGATORIOS PARA VIDEO, ORIGEN O ALTURA O ANCHO");
 			System.out.println("FALTAN ATRIBUTOS OBLIGATORIOS PARA VIDEO");
 		}
 
@@ -2371,20 +2389,24 @@ if(tieneId==true && tienePagina==true && tieneClase==true){
 			if(error==false){
 				compMenu = new ComponenteMenu(padre,etiquetas);
 			}else{
+                            msg.mandarError("ERROR: HAY CAMPOS REPETIDOS PARA MENU");
 				System.out.println("HAY CAMPOS REPETIDOS");
 			}
 		}else{
+                    msg.mandarError("ERROR: FALTAN ATRIBUTOS OBLIGATORIOS PARA MENU, PADRE O ETIQUETAS, MINIMO UNO DE LOS DOS");
 			System.out.println("FALTAN ATRIBUTOS OBLIGATORIOS PARA MENU");
 		}
 	}
 
 		
 	}else{
+            msg.mandarError("ERROR: HAY PARAMETROS REPETIDOS EN LA ACCION AGREGAR_COMPONENTE");
 		System.out.println("HAY CAMPOS REPETIDOS");
 	}
 	
 	if (error == false) {
                             if (compTitulo == null && compParrafo == null && compImagen == null && compVideo == null && compMenu == null) {
+                                msg.mandarError("ERROR: NO HAY NINGUN COMPONENTE QUE UTILIZAR EN AGREGAR_COMPONENTE");
                                 System.out.println("NO HAY NINGUN COMPONENTE QUE UTILIZAR");
                             } else {
 
@@ -2393,11 +2415,13 @@ if(tieneId==true && tienePagina==true && tieneClase==true){
                             }
 
                         } else {
+            msg.mandarError("ERROR: HAY ERRORES PARA AGREGAR COMPONENTE");
                             System.out.println("HAY ERRORES PARA AGREGAR COMPONENTE");
                         }
 	
 	
 }else{
+    msg.mandarError("ERROR: FALTAN PARAMETROS OBLIGATORIOS PARA AGREGAR COMPONENTE, ID O PAGINA O CLASE");
 	System.out.println("FALTAN PARAMETROS OBLIGATORIOS");
 	error=true;
 }
@@ -3031,12 +3055,14 @@ if(tieneId==true && tienePagina==true){
 		acciones.accionBorrarComponente(componente);
 
 	}else{
+            msg.mandarError("ERROR: HAY CAMPOS REPETIDOS EN BORRAR COMPONENTE");
 		System.out.println("HAY CAMPOS REPETIDOS");
 	}
 	
 	
 	
 }else{
+    msg.mandarError("ERROR: FALTAN PARAMETROS OBLIGATORIOS EN BORRAR COMPONENTE");
 	System.out.println("FALTAN PARAMETROS OBLIGATORIOS");
 	error=true;
 }
@@ -3182,9 +3208,11 @@ if(tieneId==true && tienePagina==true && tieneClase==true){
 			if(error==false){
 				compTitulo = new ComponenteTitulo(texto,alineacion);
 			}else{
+                            msg.mandarError("ERROR: HAY CAMPOS REPETIDOS EN TITULO");
 				System.out.println("HAY CAMPOS REPETIDOS");
 			}
 		}else{
+                    msg.mandarError("ERROR: FALTAN ATRIBUTOS OBLIGATORIOS PARA TITULO, TEXTO");
 			System.out.println("FALTAN ATRIBUTOS OBLIGATORIOS PARA TITULO");
 		}
 		
@@ -3219,9 +3247,11 @@ if(tieneId==true && tienePagina==true && tieneClase==true){
 			if(error==false){
 				compParrafo = new ComponenteParrafo(texto,alineacion,color);
 			}else{
+                            msg.mandarError("ERROR: HAY CAMPOS REPETIDOS PARA PARRAFO");
 				System.out.println("HAY CAMPOS REPETIDOS");
 			}
 		}else{
+                    msg.mandarError("ERROR: FALTAN ATRIBUTOS OBLIGATORIOS PARA PARRAFO, TEXTO");
 			System.out.println("FALTAN ATRIBUTOS OBLIGATORIOS PARA PARRAFO");
 		}
 	
@@ -3263,9 +3293,11 @@ if(tieneId==true && tienePagina==true && tieneClase==true){
 			if(error==false){
 				compImagen = new ComponenteImagen(origen,alineacion,Integer.parseInt(altura),Integer.parseInt(ancho));
 			}else{
+                            msg.mandarError("ERROR: HAY CAMPOS REPETIDOS PARA IMAGEN");
 				System.out.println("HAY CAMPOS REPETIDOS");
 			}
 		}else{
+                    msg.mandarError("ERROR: FALTAN ATRIBUTOS OBLIGATORIOS PARA IMAGEN, ORIGEN O ANCHO O ALTURA");
 			System.out.println("FALTAN ATRIBUTOS OBLIGATORIOS PARA IMAGEN");
 		}
 	
@@ -3300,9 +3332,11 @@ if(tieneId==true && tienePagina==true && tieneClase==true){
 			if(error==false){
 				compVideo = new ComponenteVideo(origen,Integer.parseInt(altura),Integer.parseInt(ancho));
 			}else{
+                            msg.mandarError("ERROR: HAY CAMPOS REPETIDOS PARA VIDEO");
 				System.out.println("HAY CAMPOS REPETIDOS");
 			}
 		}else{
+                    msg.mandarError("ERROR: FALTAN ATRIBUTOS OBLIGATORIOS PARA VIDEO, ORIGEN O ALTURA O ANCHO");
 			System.out.println("FALTAN ATRIBUTOS OBLIGATORIOS PARA VIDEO");
 		}
 
@@ -3328,20 +3362,24 @@ if(tieneId==true && tienePagina==true && tieneClase==true){
 			if(error==false){
 				compMenu = new ComponenteMenu(padre,etiquetas);
 			}else{
+                            msg.mandarError("ERROR: HAY CAMPOS REPETIDOS PARA MENU");
 				System.out.println("HAY CAMPOS REPETIDOS");
 			}
 		}else{
+                    msg.mandarError("ERROR: FALTAN ATRIBUTOS OBLIGATORIOS PARA MENU, PADRE O ETIQUETAS, MINIMO UNO DE LOS DOS");
 			System.out.println("FALTAN ATRIBUTOS OBLIGATORIOS PARA MENU");
 		}
 	}
 
 		
 	}else{
+            msg.mandarError("ERROR: HAY CAMPOS REPETIDOS EN LOS PARAMETROS PARA LA ACCION MODIFICAR COMPONENTE");
 		System.out.println("HAY CAMPOS REPETIDOS");
 	}
 	
 	if (error == false) {
                             if (compTitulo == null && compParrafo == null && compImagen == null && compVideo == null && compMenu == null) {
+                                msg.mandarError("ERROR: NO HAY NINGUN COMPONENTE QUE UTILIZAR EN LA ACCION MODIFICAR COMPONENTE");
                                 System.out.println("NO HAY NINGUN COMPONENTE QUE UTILIZAR");
                             } else {
 
@@ -3350,11 +3388,12 @@ if(tieneId==true && tienePagina==true && tieneClase==true){
                             }
 
                         } else {
+            msg.mandarError("ERROR: HAY ERRORES PARA MODIFICAR COMPONENTE");
                             System.out.println("HAY ERRORES PARA MODIFICAR COMPONENTE");
                         }
 	
 	
-}else{
+}else{msg.mandarError("ERROR: FALTAN PARAMETROS OBLIGATORIOS PARA MODIFICAR COMPONENTE, ID O PAGINA O CLASE");
 	System.out.println("FALTAN PARAMETROS OBLIGATORIOS");
 	error=true;
 }

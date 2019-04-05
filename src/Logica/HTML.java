@@ -25,96 +25,97 @@ import java.util.logging.Logger;
  * @author jcsr
  */
 public class HTML {
-
+    // atributos privados de la clase
     private final String DIRECCION_APACHE = "/var/www/html";
+    private final String DIRECCION_LOCALHOST = "../";
 
-    private static String INICIO_HTML = "<html>";
-    private static String FIN_HTML = "</html>";
-    private static String INICIO_BODY = "<body>";
-    private static String FIN_BODY = "</body>";
-    private static String INICIO_P = "<p>";
-    private static String FIN_P = "</p>";
+    private static final String INICIO_HTML = "<html>";
+    private static final String FIN_HTML = "</html>";
+    private static final String INICIO_BODY = "<body>";
+    private static final String FIN_BODY = "</body>";
+    private static final String INICIO_P = "<p>";
+    private static final String FIN_P = "</p>";
 
-    private static String INICIO_COMPONENTE = "<COMPONENTE>";
-    private static String FIN_COMPONENTE = "</COMPONENTE>";
-    private static String INICIO_ID = "<ID>";
-    private static String FIN_ID = "</ID>";
-    private static String INICIO_PAGINA = "<PAGINA>";
-    private static String FIN_PAGINA = "</PAGINA>";
-    private static String INICIO_CLASE = "<CLASE>";
-    private static String FIN_CLASE = "</CLASE>";
-    private static String INICIO_PAGINA_WEB = "<PAGINA_WEB>";
-    private static String FIN_PAGINA_WEB = "</PAGINA_WEB>";
-    private static String INICIO_LINK = "<LINK>";
-    private static String FIN_LINK = "</LINK>";
-    private static String INICIO_SITIO_WEB = "<SITIO_WEB>";
-    private static String FIN_SITIO_WEB = "</SITIO_WEB>";
-    private static String INICIO_PADRE = "<PADRE>";
-    private static String FIN_PADRE = "</PADRE>";
-    private static String INICIO_USUARIO_CREACION = "<USUARIO_CREACION>";
-    private static String FIN_USUARIO_CREACION = "</USUARIO_CREACION>";
-    private static String INICIO_USUARIO_MODIFICACION = "<USUARIO_MODIFICACION>";
-    private static String FIN_USUARIO_MODIFICACION = "</USUARIO_MODIFICACION>";
-    private static String INICIO_FECHA_CREACION = "<FECHA_CREACION>";
-    private static String FIN_FECHA_CREACION = "</FECHA_CREACION>";
-    private static String INICIO_FECHA_MODIFICACION = "<FECHA_MODIFICACION>";
-    private static String FIN_FECHA_MODIFICACION = "</FECHA_MODIFICACION>";
-    private static String INICIO_ETIQUETAS = "<ETIQUETAS>";
-    private static String FIN_ETIQUETAS = "</ETIQUETAS>";
-    private static String INICIO_ETIQUETA = "<ETIQUETA>";
-    private static String FIN_ETIQUETA = "</ETIQUETA>";
-    private static String INICIO_SITIO = "<SITIO>";
-    private static String FIN_SITIO = "</SITIO>";
+    private static final String INICIO_COMPONENTE = "<COMPONENTE>";
+    private static final String FIN_COMPONENTE = "</COMPONENTE>";
+    private static final String INICIO_ID = "<ID>";
+    private static final String FIN_ID = "</ID>";
+    private static final String INICIO_PAGINA = "<PAGINA>";
+    private static final String FIN_PAGINA = "</PAGINA>";
+    private static final String INICIO_CLASE = "<CLASE>";
+    private static final String FIN_CLASE = "</CLASE>";
+    private static final String INICIO_PAGINA_WEB = "<PAGINA_WEB>";
+    private static final String FIN_PAGINA_WEB = "</PAGINA_WEB>";
+    private static final String INICIO_LINK = "<LINK>";
+    private static final String FIN_LINK = "</LINK>";
+    private static final String INICIO_SITIO_WEB = "<SITIO_WEB>";
+    private static final String FIN_SITIO_WEB = "</SITIO_WEB>";
+    private static final String INICIO_PADRE = "<PADRE>";
+    private static final String FIN_PADRE = "</PADRE>";
+    private static final String INICIO_USUARIO_CREACION = "<USUARIO_CREACION>";
+    private static final String FIN_USUARIO_CREACION = "</USUARIO_CREACION>";
+    private static final String INICIO_USUARIO_MODIFICACION = "<USUARIO_MODIFICACION>";
+    private static final String FIN_USUARIO_MODIFICACION = "</USUARIO_MODIFICACION>";
+    private static final String INICIO_FECHA_CREACION = "<FECHA_CREACION>";
+    private static final String FIN_FECHA_CREACION = "</FECHA_CREACION>";
+    private static final String INICIO_FECHA_MODIFICACION = "<FECHA_MODIFICACION>";
+    private static final String FIN_FECHA_MODIFICACION = "</FECHA_MODIFICACION>";
+    private static final String INICIO_ETIQUETAS = "<ETIQUETAS>";
+    private static final String FIN_ETIQUETAS = "</ETIQUETAS>";
+    private static final String INICIO_ETIQUETA = "<ETIQUETA>";
+    private static final String FIN_ETIQUETA = "</ETIQUETA>";
+    private static final String INICIO_SITIO = "<SITIO>";
+    private static final String FIN_SITIO = "</SITIO>";
 
-    private static String INICIO_TITULO_PAGINA = "<TITULO_PAGINA>";
-    private static String FIN_TITULO_PAGINA = "</TITULO_PAGINA>";
-    private static String INICIO_TEXTO = "<TEXTO>";
-    private static String FIN_TEXTO = "</TEXTO>";
-    private static String INICIO_ALINEACION = "<ALINEACION>";
-    private static String FIN_ALINEACION = "</ALINEACION>";
-    private static String INICIO_COLOR = "<COLOR>";
-    private static String FIN_COLOR = "</COLOR>";
-    private static String INICIO_ORIGEN = "<ORIGEN>";
-    private static String FIN_ORIGEN = "</ORIGEN>";
-    private static String INICIO_ALTURA = "<ALTURA>";
-    private static String FIN_ALTURA = "</ALTURA>";
-    private static String INICIO_ANCHO = "<ANCHO>";
-    private static String FIN_ANCHO = "</ANCHO>";
+    private static final String INICIO_TITULO_PAGINA = "<TITULO_PAGINA>";
+    private static final String FIN_TITULO_PAGINA = "</TITULO_PAGINA>";
+    private static final String INICIO_TEXTO = "<TEXTO>";
+    private static final String FIN_TEXTO = "</TEXTO>";
+    private static final String INICIO_ALINEACION = "<ALINEACION>";
+    private static final String FIN_ALINEACION = "</ALINEACION>";
+    private static final String INICIO_COLOR = "<COLOR>";
+    private static final String FIN_COLOR = "</COLOR>";
+    private static final String INICIO_ORIGEN = "<ORIGEN>";
+    private static final String FIN_ORIGEN = "</ORIGEN>";
+    private static final String INICIO_ALTURA = "<ALTURA>";
+    private static final  String FIN_ALTURA = "</ALTURA>";
+    private static final String INICIO_ANCHO = "<ANCHO>";
+    private static final String FIN_ANCHO = "</ANCHO>";
 
-    private static String INICIO_DIV = "<div";
-    private static String FIN_DIV = "</div>";
-    private static String INICIO_IMG = "<img ";
+    private static final String INICIO_DIV = "<div";
+    private static final String FIN_DIV = "</div>";
+    private static final String INICIO_IMG = "<img ";
 
-    private static String CORCHETE_CERRADO = ">";
-    private static String SRC = "src=";
-    private static String WIDTH = "width=";
-    private static String HEIGHT = "height=";
-    private static String ALIGN = "align=";
-    private static String RIGHT = "right";
-    private static String LEFT = "left";
-    private static String CENTER = "center";
-    private static String JUSTIFY = "justify";
+    private static final String CORCHETE_CERRADO = ">";
+    private static final String SRC = "src=";
+    private static final String WIDTH = "width=";
+    private static final String HEIGHT = "height=";
+    private static final String ALIGN = "align=";
+    private static final String RIGHT = "right";
+    private static final String LEFT = "left";
+    private static final String CENTER = "center";
+    private static final String JUSTIFY = "justify";
 
-    private static String INICIO_P_SIN = "<p ";
-    private static String STYLE = "style=\"color:";
+    private static final String INICIO_P_SIN = "<p ";
+    private static final String STYLE = "style=\"color:";
 
-    private static String INICIO_H1 = "<h1 ";
-    private static String FIN_H1 = "</h1>";
+    private static final String INICIO_H1 = "<h1 ";
+    private static final String FIN_H1 = "</h1>";
 
-    private static String INICIO_VIDEO = "<video ";
-    private static String CONTROLS = "controls";
-    private static String FIN_VIDEO = "</video>";
+    private static final String INICIO_VIDEO = "<video ";
+    private static final String CONTROLS = "controls";
+    private static final String FIN_VIDEO = "</video>";
 
-    private static String INICIO_A = "<a ";
-    private static String FIN_A = "</a>";
+    private static final String INICIO_A = "<a ";
+    private static final String FIN_A = "</a>";
 
-    private static String HREF = "href=";
-    private static String BR = "<br>";
-    private static String INICIO_TITLE = "<title>";
-    private static String FIN_TITLE = "</title>";
+    private static final String HREF = "href=";
+    private static final String BR = "<br>";
+    private static final String INICIO_TITLE = "<title>";
+    private static final String FIN_TITLE = "</title>";
     
     public Mensajes msg = new Mensajes();
-
+// metodo que genera el index de un sitio web 
     public void crearIndexSitio(NuevoSitioWeb nuevoSitioWeb, String pathSitio, String pathIndex) {
 
         try {
@@ -130,16 +131,16 @@ public class HTML {
             ex.printStackTrace();
         }
     }
-
+// crea una pagina web 
     public void crearPaginaWeb(NuevaPagina nuevaPagina, String pathPagina) {
-        try {
+        try {// crea el nuevo archivo 
             File archivoPagina = new File(pathPagina);
             archivoPagina.createNewFile();
             FileWriter writer;
             writer = new FileWriter(archivoPagina);
             BufferedWriter escritor = new BufferedWriter(writer);
             if (nuevaPagina.getTitulo() != null) {
-                escritor.write(INICIO_HTML);
+                escritor.write(INICIO_HTML);// y si tiene titulo le genera el titulo de una vez
                 escritor.write(INICIO_TITLE);
                 escritor.write(nuevaPagina.getTitulo());
                 escritor.write(FIN_TITLE);
@@ -151,7 +152,7 @@ public class HTML {
             ex.printStackTrace();
         }
     }
-    
+    // crea un titulo en base al path y el titulo
     public void crearTitulo(String path,String titulo){
         try {
             File archivoPagina = new File(path);
@@ -172,20 +173,20 @@ public class HTML {
             ex.printStackTrace();
         }
     }
-
+// crea el componente en el archivo en base a la info
     public void crearComponente(AgregarComponente agregar, String pagina) {
         try {
             File archivo = new File(pagina);
             FileWriter writer;
             writer = new FileWriter(archivo, true);
             BufferedWriter escritor = new BufferedWriter(writer);
-
+            // si es una imagen genera la info de imagen 
             if (agregar.isEsImagen()) {
 
                 ComponenteImagen imagen = agregar.getCompImagen();
                 escritor.write(INICIO_HTML);
                 escritor.write(INICIO_BODY);
-
+// si tiene alineacion 
                 if (imagen.getAlineacion() != null) {
                     escritor.write(INICIO_DIV);
                     escritor.write(" " + ALIGN);
@@ -216,7 +217,7 @@ public class HTML {
                 escritor.flush();
                 escritor.close();
                 System.out.println("Se creo el componente imagen ");
-
+// si es un menu genera el objeto de menu
             } else if (agregar.isEsMenu()) {
                 Acciones acciones = new Acciones();
                 ComponenteMenu menu = agregar.getCompMenu();
@@ -226,7 +227,7 @@ public class HTML {
                 escritor.write(INICIO_HTML);
                 escritor.write(INICIO_BODY);
                 escritor.write(BR);
-
+// si tiene filtros los hace aqui
                 if (menu.getPadre() != null && menu.getEtiquetas() != null && menu.getEtiquetas().size() > 0) {
                     paginasHijas = acciones.paginasHijas(menu.getPadre());
                     paginasEtiquetas = acciones.paginasEtiqueta(menu.getEtiquetas());
@@ -236,7 +237,7 @@ public class HTML {
                         if (paginasResultantes.get(i).getId().startsWith("_index")) {
                             id = "index";
                         }
-                        String path = DIRECCION_APACHE + "/" + paginasResultantes.get(i).getSitio() + "/" + id + ".html";
+                        String path = DIRECCION_LOCALHOST  + paginasResultantes.get(i).getSitio() + "/" + id + ".html";
                         escritor.write(INICIO_A);
                         escritor.write(" " + HREF);
                         escritor.write("\"" + path + "\"");
@@ -254,7 +255,7 @@ public class HTML {
                         if (paginasEtiquetas.get(i).getId().startsWith("_index")) {
                             id = "index";
                         }
-                        String path = DIRECCION_APACHE + "/" + paginasEtiquetas.get(i).getSitio() + "/" + id + ".html";
+                        String path = DIRECCION_LOCALHOST+ paginasEtiquetas.get(i).getSitio() + "/" + id + ".html";
                         escritor.write(INICIO_A);
                         escritor.write(" " + HREF);
                         escritor.write("\"" + path + "\"");
@@ -271,7 +272,7 @@ public class HTML {
                         if (paginasHijas.get(i).getId().startsWith("_index")) {
                             id = "index";
                         }
-                        String path = DIRECCION_APACHE + "/" + paginasHijas.get(i).getSitio() + "/" + id + ".html";
+                        String path = DIRECCION_LOCALHOST + paginasHijas.get(i).getSitio() + "/" + id + ".html";
                         escritor.write(INICIO_A);
                         escritor.write(" " + HREF);
                         escritor.write("\"" + path + "\"");
@@ -288,7 +289,7 @@ public class HTML {
                 escritor.flush();
                 escritor.close();
                 System.out.println("Se creo el componente menu ");
-
+// si es un parrafo genera la info de parrafo
             } else if (agregar.isEsParrafo()) {
                 ComponenteParrafo parrafo = agregar.getCompParrafo();
                 escritor.write(INICIO_HTML);
@@ -341,7 +342,7 @@ public class HTML {
                 escritor.flush();
                 escritor.close();
                 System.out.println("Se creo el componente PARRAFO ");
-
+// si es un titulo genera la info de titulo
             } else if (agregar.isEsTitulo()) {
                 ComponenteTitulo titulo = agregar.getCompTitulo();
                 escritor.write(INICIO_HTML);
@@ -373,7 +374,7 @@ public class HTML {
                 escritor.flush();
                 escritor.close();
                 System.out.println("Se creo el componente titulo");
-
+// genera la info de video 
             } else if (agregar.isEsVideo()) {
 
                 ComponenteVideo video = agregar.getCompVideo();
@@ -401,7 +402,7 @@ public class HTML {
             ex.printStackTrace();
         }
     }
-    
+    // sirve para borrar una pagina
     public void borrarPagina(String path){
         try{
         File archivo = new File(path);
@@ -410,7 +411,7 @@ public class HTML {
             e.printStackTrace();
         }
     }
-
+// borra un folder que tiene hijos de forma recursiva 
     public void borrarSitio(File directorio) {
         File[] ficheros = directorio.listFiles();
         for (int x = 0; x < ficheros.length; x++) {
@@ -421,15 +422,15 @@ public class HTML {
         }
         
     }
-
+// guarda en la base de datos toda la informacion
     public void guardarBaseDatos(ArrayList<Sitio> sitios, ArrayList<Pagina> paginas, ArrayList<Componente> componentes) {
         try {
-
+// abre el archivo y empieza a sobreescribir
             File baseDatos = new File("baseDatos.txt");
             FileWriter writer;
             writer = new FileWriter(baseDatos, false);
             BufferedWriter escritor = new BufferedWriter(writer);
-
+// primero los sitios
             for (int i = 0; i < sitios.size(); i++) {
                 escritor.write(INICIO_SITIO + "\n");
 
@@ -456,7 +457,7 @@ public class HTML {
                 escritor.write(FIN_SITIO + "\n" + "\n");
 
             }
-
+// luego las paginas
             for (int i = 0; i < paginas.size(); i++) {
                 escritor.write(INICIO_PAGINA + "\n");
 
@@ -519,7 +520,7 @@ public class HTML {
                 escritor.write(FIN_PAGINA + "\n" + "\n");
 
             }
-
+// y por ultimo los componentes
             for (int i = 0; i < componentes.size(); i++) {
                 escritor.write(INICIO_COMPONENTE + "\n");
 
